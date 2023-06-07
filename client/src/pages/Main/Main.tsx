@@ -34,7 +34,7 @@ const MainPage: React.FC = () => {
         <Map
           defaultState={{ center: userLocation, zoom: 10 }}
           onClick={handleMapClick}
-          style={{ width: "40%", height: "500px" }}
+          style={{ width: "500px", height: "500px" }}
         >
           {/* {events.map((event: Event) => (
           <Placemark key={event.id} geometry={event.location} />

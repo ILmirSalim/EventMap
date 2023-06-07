@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import { useDispatch } from 'react-redux';
-import { login, register } from '../../redux/slices/authSlice';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
+import { login } from '../../redux/slices/authSlice';
+import { RootState, AppDispatch } from '../../redux/store/store'
+
 
 interface User {
   email: string;
@@ -13,52 +14,71 @@ interface User {
 }
 
 interface AuthResponse {
-  token: string;
+  accesstoken: string;
   user: User;
   refreshToken: string
 }
 
+interface UserCredentials {
+  email: string;
+  password: string;
+  userName: string;
+  userAge: string;
+  interestsAndPreferences: string;
+}
+
+
 const AuthComponent: React.FC = () => {
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [userName, setUserName] = useState('');
-  const [userAge, setUserAge] = useState('');
-  const [interestsAndPreferences, setinterestsAndPreferences] = useState('');
-  const dispatch = useDispatch();
-  const isAuthenticatedd = useSelector((state: any) => state.auth.isAuthenticated);
-  const error = useSelector((state: any) => state.auth.error);
+  // const [isAuthenticated, setIsAuthenticated] = useState(false);
+  // const [email, setEmail] = useState('');
+  // const [password, setPassword] = useState('');
+  // const [userName, setUserName] = useState('');
+  // const [userAge, setUserAge] = useState('');
+  // const [interestsAndPreferences, setinterestsAndPreferences] = useState('');
 
-  const handleRegister = async () => {
-    try {
-      const response = await axios.post<AuthResponse>('http://localhost:3002/api/registration', {
-        email,
-        password,
-        userName,
-        userAge,
-        interestsAndPreferences
-      });
-      localStorage.setItem('token', response.data.refreshToken);
-      console.log(response.data);
+  const [userCredentials, setUserCredentials] = useState<UserCredentials>({
+    userName: '',
+    userAge: '',
+    interestsAndPreferences: '',
+    email: '',
+    password: '',
+  })
 
-      setIsAuthenticated(true);
-      alert("Регистрация прошла успешно")
-    } catch (error) {
-      console.log(error);
-    }
+  const dispatch = useDispatch<AppDispatch>()
+
+
+  const isAuthenticated = useSelector((state: RootState) => state.auth.isAuthenticated);
+
+  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    dispatch(login(userCredentials));
   };
 
-  const handleLogin = () => {
-    const payload = {
-      email:email,
-      password: password
-    }
-    try {
-      dispatch(login(payload));
-    } catch (error) {
-      console.log(error);
-    }
+  const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = event.target;
+    setUserCredentials((prevState) => ({ ...prevState, [name]: value }));
   };
+
+  // const handleRegister = async () => {
+  //   try {
+  //     const response = await axios.post<AuthResponse>('http://localhost:3002/api/registration', {
+  //       email,
+  //       password,
+  //       userName,
+  //       userAge,
+  //       interestsAndPreferences
+  //     });
+  //     localStorage.setItem('token', response.data.refreshToken);
+  //     console.log(response.data);
+
+  //     // setIsAuthenticated(true);
+  //     alert("Регистрация прошла успешно")
+  //   } catch (error) {
+  //     console.log(error);
+  //   }
+  // };
+
+
   // const handleLogin = async () => {
   //   try {
   //     const response = await axios.post<AuthResponse>('http://localhost:3002/api/login', {
@@ -72,42 +92,40 @@ const AuthComponent: React.FC = () => {
   //   }
   // };
 
-  const handleLogout = () => {
-    localStorage.removeItem('token');
-    setIsAuthenticated(false);
-  };
-
   useEffect(() => {
     console.log(localStorage.getItem('token'));
 
     const user = localStorage.getItem('token')
     if (user) {
-      setIsAuthenticated(true)
+      // setIsAuthenticated(true)
     }
   }, [])
   return (
     <>
-      {isAuthenticated ? (
+      {isAuthenticated ? null : (
         <>
-          <div>Welcome back</div>
-          <button onClick={handleLogout}>Logout</button>
-        </>
-      ) : (
-        <>
-          <div>Register:</div>
-          <input
-            type="text"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            placeholder="Enter email"
-          />
-          <input
-            type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            placeholder="Enter password"
-          />
-          <input
+          <form onSubmit={handleSubmit}>
+            <label>
+              Email:
+              <input
+                type="email"
+                name="email"
+                value={userCredentials.email}
+                onChange={handleInputChange}
+              />
+            </label>
+            <label>
+              Password:
+              <input
+                type="password"
+                name="password"
+                value={userCredentials.password}
+                onChange={handleInputChange}
+              />
+            </label>
+            <button type="submit">Submit</button>
+          </form>
+          {/* <input
             type="username"
             value={userName}
             onChange={(e) => setUserName(e.target.value)}
@@ -125,8 +143,8 @@ const AuthComponent: React.FC = () => {
             onChange={(e) => setinterestsAndPreferences(e.target.value)}
             placeholder="Enter interestsAndPreferences"
           />
-          <button onClick={handleRegister}>Register</button>
-          <button className='ml-[50px]' onClick={handleLogin}>login</button>
+          <button onClick={handleRegister}>Register</button> */}
+          {/* <button className='ml-[50px]' >login</button> */}
 
         </>
       )}
