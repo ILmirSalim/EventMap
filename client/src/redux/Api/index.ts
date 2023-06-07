@@ -1,11 +1,15 @@
 import axios, { AxiosResponse } from 'axios';
 
 interface Event {
-    id: string;
-    name: string;
-    date: string;
-    description: string;
-}
+    // id: string;
+    title: string,
+    description: string,
+    locationType: string,
+    address: string,
+    date: Date,
+    category: string,
+    coordinates: [number, number];
+  }
 
 export const eventAPI = {
     async createEvent(newEvent:Event): Promise<Event> {
@@ -17,4 +21,14 @@ export const eventAPI = {
             throw new Error('Failed to create event');
         }
     },
+    async getAllEvents(): Promise<Event[]> {
+        try {
+          const response: AxiosResponse<Event[]> = await axios.get<Event[]>('http://localhost:3002/api/events');
+          return response.data;
+        } catch (err) {
+          console.log(err);
+          throw new Error('Failed to fetch events');
+        }
+      },
+
 }

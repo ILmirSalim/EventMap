@@ -8,6 +8,7 @@ const eventSchema = new Schema({
   address: { type: String },
   date: { type: Date },
   category: { type: String },
+  users:[String]
 });
 
 // eventSchema.index({ location: '2dsphere' });

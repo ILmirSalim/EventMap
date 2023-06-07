@@ -13,6 +13,7 @@ import CreateEvent from './pages/CreateEvent/CreateEvent';
 import DetailEvent from './pages/DetailEvent/DetailEvent';
 import SearchEvent from './pages/SearchEvent/SearchEvent';
 import UserProfile from './pages/UserProfile/UserProfile';
+import { PostDetail } from './components/EventDetail';
 
 
 const router = createBrowserRouter([
@@ -39,6 +40,10 @@ const router = createBrowserRouter([
       {
         path: "/user-profile",
         element: <UserProfile />,
+      },
+      {
+        path: "/event/:id",
+        element: <PostDetail/>,
       },
     ],
   },

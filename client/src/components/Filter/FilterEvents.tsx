@@ -25,7 +25,7 @@ export const FilterEvents: FC<FilterProps> = ({ setDistanceFilter, setTypesFilte
   };
 
   return (
-    <div className="block">
+    <div className="block mt-[20px]">
       <input type='number' placeholder='Distance' onChange={handleDistanceChange}></input>
       <input type='text' placeholder='Type' onChange={handleTypesChange}></input>
       <input type='date' placeholder='Date' onChange={handleDateChange}></input>
