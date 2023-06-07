@@ -24,6 +24,8 @@ export const eventAPI = {
     async getAllEvents(): Promise<Event[]> {
         try {
           const response: AxiosResponse<Event[]> = await axios.get<Event[]>('http://localhost:3002/api/events');
+          console.log(response.data);
+          
           return response.data;
         } catch (err) {
           console.log(err);

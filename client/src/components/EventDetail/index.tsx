@@ -8,16 +8,17 @@ interface EventState {
   event: Event | null;
   events: Event[] | null;
 }
-export const PostDetail = () => {
+export const EventDetail = () => {
   const { id } = useParams<{ id: string }>();
   const {events}  = useSelector((state: { event: EventState }) => state.event);
   const user = useSelector((state: RootState) => state.auth.user)
-  console.log(user);
+  console.log(id);
   
   const navigate = useNavigate()
   console.log('events', events);
   
   const event = events?.find((event: Event) => event._id===id);
+   console.log('event', event);
    
   const handleNavigate = () => {
     navigate('/search-event');
@@ -40,3 +41,5 @@ export const PostDetail = () => {
     </div>
   );
 };
+
+export default EventDetail

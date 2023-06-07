@@ -1,4 +1,4 @@
-import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { eventAPI } from '../Api';
 // import {Event} from '../../pages/CreateEvent/CreateEvent'
 

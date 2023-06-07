@@ -34,8 +34,7 @@ export const SearchEvent: React.FC = () => {
   const [events, setEvents] = useState<Event[]>([])
   const [date, setDate] = useState<Date | null>(null);
   const [lastDate, setLastDate] = useState<Date | null>(null);
-  console.log(date);
-
+ 
   const handleCategoryChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setCategory(event.target.value);
   };
@@ -71,7 +70,7 @@ export const SearchEvent: React.FC = () => {
           endDate: endDate
         }
       );
-      console.log(response.data);
+      
       setEvents(response.data);
     } catch (error) {
       console.log(error);
