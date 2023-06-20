@@ -7,8 +7,8 @@ const imageMiddlware = require('../middlewares/imageUploads')
 
 const routes = new Router()
 
-routes.post('/registration', 
-    imageMiddlware.single('avatar'), 
+routes.post('/registration',
+    imageMiddlware.single('avatar'),
     body('userName').not().isEmpty(),
     body('userAge').not().isEmpty(),
     body('email').isEmail(),
@@ -24,5 +24,9 @@ routes.post('/addUserEvent', eventController.addUserToEvent)
 // routes.get('/searchevents', eventController.searchEvents);
 routes.post('/search', eventController.searchEventsByCategory);
 routes.post('/filterevents', eventController.filterEvents)
+routes.post('/addUserToEvent', eventController.addUserToEvent)
+routes.post('/addFeedbackToEvent', eventController.addFeedbackToEvent)
+routes.post('/removeUserFromEvent', eventController.removeUserFromEvent)
+routes.post('/getEventsByUserId', eventController.getEventsByUserId)
 
 module.exports = routes

@@ -14,19 +14,84 @@ class EventsController {
 
   async addUserToEvent(req, res) {
     try {
-      const eventId = req.body;
-      const user = req.body
-      const userId = user._id;
-      const event = await EventModel.findOne({ _id: eventId });
-      event.users.push(userId);
-      await event.save();
+      const eventId = req.body.eventId;
+      const userId = req.body.userId;
+
+      const eventt = await EventModel.findById(eventId);
+      if (eventt.users.includes(userId)) {
+        return res.status(400).json({ message: 'User is already added to the event' });
+      }
+      const event = await EventModel.findByIdAndUpdate(eventId, { $push: { users: userId } }, { new: true });
       res.status(200).json(event);
+
     } catch (e) {
       console.log('This is error', e.message);
       res.status(400).json({ message: e.message });
     }
   };
-  
+
+  async addFeedbackToEvent(req, res) {
+    try {
+      const eventId = req.body.eventId;
+      const user = req.body.user;
+      const feedback = req.body.feedback
+      const rating = req.body.rating
+
+      const updatedEvent = await EventModel.findByIdAndUpdate(
+        eventId,
+        {
+          $push: {
+            feedbackUser: {
+              user: user,
+              feedback: feedback
+            },
+            rating: rating 
+          },
+          
+        },
+        { new: true }
+      );
+
+      res.status(200).json(updatedEvent);
+    } catch (error) {
+      console.error('This is error', error.message);
+      res.status(400).json({ message: error.message });
+    }
+  }
+
+  async removeUserFromEvent(req, res) {
+    try {
+      const eventId = req.body.eventId;
+      const userId = req.body.userId;
+
+      await EventModel.findByIdAndUpdate(eventId, { $pull: { users: userId } }, { new: true });
+
+      // if (!event.users.includes(userId)) {
+      //     return res.status(400).json({ message: 'User is not part of the event' });
+      // }
+
+      res.status(200).json({ message: 'User remove in event' });
+
+    } catch (e) {
+      console.log('This is error', e.message);
+      res.status(400).json({ message: e.message });
+    }
+  }
+
+  async getEventsByUserId(req, res) {
+    try {
+      const userId = req.body.userId;
+
+      const events = await EventModel.find({ users: userId });
+
+      res.status(200).json(events);
+
+    } catch (e) {
+      console.log('This is error', e.message);
+      res.status(400).json({ message: e.message });
+    }
+  }
+
   async searchEventsByCategory(req, res) {
     const title = req.body.title;
     const category = req.body.category;
@@ -108,28 +173,6 @@ class EventsController {
     }
   }
 
-  async confirmParticipation(req, res) {
-    try {
-      const { userId } = req.body;
-      const eventId = req.params.eventId;
-      const event = await EventModel.findById(eventId);
-      if (!event) {
-        return res.status(404).json({ message: "Event not found" });
-      }
-      const existingParticipant = event.participants.find((participant) => participant.user.toString() === userId);
-      if (existingParticipant) {
-        return res.status(400).json({ message: "User has already confirmed or cancelled participation" });
-      }
-      event.participants.push({ user: userId, status: "confirmed" });
-      await EventModel.updateOne({ _id: eventId }, event);
-      res.status(200).json({ message: "User participation confirmed" });
-    } catch (e) {
-      console.log("this is error", e.message);
-      res.status(400).json({ message: e.message });
-    }
-  };
-
-
   async filterEvents(req, res) {
     try {
       const { distance, type, date } = req.body;
@@ -161,16 +204,6 @@ class EventsController {
     }
   }
 
-  // async getAllEvents(req, res) {
-  //     try {
-  //       const eventsData = await EventModel.find({})
-  //       res.status(200).json(eventsData)
-  //     } catch (e) {
-  //       console.log('this is error', e.message)
-  //       res.status(400).json({ message: e.message })
-  //     }
-  //   };
-
   async addEvent(req, res) {
     try {
       if (!req.body.title) {
@@ -185,7 +218,8 @@ class EventsController {
         coordinates: req.body.coordinates,
         address: req.body.address,
         date: req.body.date,
-        category: req.body.category
+        category: req.body.category,
+        userCreatedEvent: req.body.userCreatedEvent
 
 
 

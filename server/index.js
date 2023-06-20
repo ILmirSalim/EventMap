@@ -3,6 +3,7 @@ const mongoose = require('mongoose')
 const cors = require('cors')
 const routes = require('./routes/routes')
 const cookieParser = require('cookie-parser')
+const fileRouter = require('./routes/file.routes')
 
 require('dotenv').config()
 
@@ -16,6 +17,7 @@ app.use(cors({
 app.use(express.json())
 app.use(cookieParser())
 app.use('/api', routes)
+app.use('/api/files', fileRouter)
 
 const PORT = process.env.PORT || 3001
 

@@ -5,10 +5,10 @@ const File = require('../models/avatar-model')
 class FileController {
     async createDir(req, res) {
         try {
-            const {name, type, parent} = req.body
-            const file = new File({name, type, parent, user:req.user.id})
-            const parentFile = await File.findOne({_id: parent})
-            if(!parentFile){
+            const { name, type, parent } = req.body
+            const file = new File({ name, type, parent, user: req.user.id })
+            const parentFile = await File.findOne({ _id: parent })
+            if (!parentFile) {
                 file.path = name
                 await fileService.createDir(file)
             } else {

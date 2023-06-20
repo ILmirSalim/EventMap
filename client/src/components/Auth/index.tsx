@@ -59,39 +59,6 @@ const AuthComponent: React.FC = () => {
     setUserCredentials((prevState) => ({ ...prevState, [name]: value }));
   };
 
-  // const handleRegister = async () => {
-  //   try {
-  //     const response = await axios.post<AuthResponse>('http://localhost:3002/api/registration', {
-  //       email,
-  //       password,
-  //       userName,
-  //       userAge,
-  //       interestsAndPreferences
-  //     });
-  //     localStorage.setItem('token', response.data.refreshToken);
-  //     console.log(response.data);
-
-  //     // setIsAuthenticated(true);
-  //     alert("Регистрация прошла успешно")
-  //   } catch (error) {
-  //     console.log(error);
-  //   }
-  // };
-
-
-  // const handleLogin = async () => {
-  //   try {
-  //     const response = await axios.post<AuthResponse>('http://localhost:3002/api/login', {
-  //       email,
-  //       password,
-  //     });
-  //     localStorage.setItem('token', response.data.refreshToken);
-  //     setIsAuthenticated(true);
-  //   } catch (error) {
-  //     console.log(error);
-  //   }
-  // };
-
   useEffect(() => {
     console.log(localStorage.getItem('token'));
 
@@ -125,26 +92,6 @@ const AuthComponent: React.FC = () => {
             </label>
             <button type="submit">Submit</button>
           </form>
-          {/* <input
-            type="username"
-            value={userName}
-            onChange={(e) => setUserName(e.target.value)}
-            placeholder="Enter name"
-          />
-          <input
-            type="userAge"
-            value={userAge}
-            onChange={(e) => setUserAge(e.target.value)}
-            placeholder="Enter userAge"
-          />
-          <input
-            type="interestsAndPreferences"
-            value={interestsAndPreferences}
-            onChange={(e) => setinterestsAndPreferences(e.target.value)}
-            placeholder="Enter interestsAndPreferences"
-          />
-          <button onClick={handleRegister}>Register</button> */}
-          {/* <button className='ml-[50px]' >login</button> */}
 
         </>
       )}

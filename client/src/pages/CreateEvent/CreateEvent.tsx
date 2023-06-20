@@ -1,20 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { YMaps, Map, Placemark, GeolocationControl } from "@pbe/react-yandex-maps";
-import { FilterEvents } from '../../components/Filter/FilterEvents';
 import { useDispatch, useSelector } from 'react-redux';
 import { addEvent, getAllEvents } from '../../redux/slices/eventSlice';
-import { AppDispatch } from '../../redux/store/store'
+import { AppDispatch, RootState  } from '../../redux/store/store'
+import { Event, EventState } from './interfaces';
 
-export interface Event {
-  _id: string;
-  title: string,
-  description: string,
-  locationType: string,
-  address: string,
-  date: Date,
-  category: string,
-  coordinates: [number, number];
-}
 
 export const CreateEvent = () => {
   const [title, setTitle] = useState('');
@@ -26,19 +16,12 @@ export const CreateEvent = () => {
   const [category, setCategory] = useState('');
   const [userLocation, setUserLocation] = useState<[number, number]>([0, 0]);
   const [placemarkCoordinates, setPlacemarkCoordinates] = useState<number[]>([])
-  interface EventState {
-    status: 'idle' | 'loading' | 'succeeded' | 'failed';
-    event: Event | null;
-    events: Event[] | null;
-  }
-  const [distanceFilter, setDistanceFilter] = useState<number>();
-  const [typeFilter, setTypesFilter] = useState<string[]>();
-  const [dateFilter, setDateFilter] = useState<Date>();
-  const [timeFilter, setTimeFilter] = useState<number>();
+  const [userCreatedEvent, setUserCreatedEvent] = useState<string | undefined>('')
+
+  const user = useSelector((state: RootState) => state.auth.user)
   const dispatch = useDispatch<AppDispatch>()
   const {events}  = useSelector((state: { event: EventState }) => state.event);
-  console.log(events);
-  
+ 
   const handleMapClick2 = (event: any) => {
     const clickedCoordinates = [event.get('coords')[0], event.get('coords')[1]];
     setCoordinates(clickedCoordinates);
@@ -55,9 +38,11 @@ export const CreateEvent = () => {
       address: address,
       date: date,
       category: category,
+      userCreatedEvent: userCreatedEvent
     };
     try {
       dispatch(addEvent(newEvent));
+      dispatch(getAllEvents())
       alert('Событие успешно добавлено!')
     } catch (error) {
       console.error(error);
@@ -73,10 +58,10 @@ export const CreateEvent = () => {
         console.error(error);
       }
     );
-  
+      setUserCreatedEvent(user?.email)
     dispatch(getAllEvents());
     
-  }, [dispatch]);
+  }, [dispatch, user?.email]);
 
   return (
     <div className='flex justify-center items-center'>
@@ -155,11 +140,6 @@ export const CreateEvent = () => {
             <GeolocationControl options={{ float: "left" }} />
           </Map>
         </YMaps>
-        <FilterEvents
-          setDistanceFilter={setDistanceFilter}
-          setTypesFilter={setTypesFilter}
-          setDateFilter={setDateFilter}
-          setTimeFilter={setTimeFilter} />
       </div>
 
     </div>

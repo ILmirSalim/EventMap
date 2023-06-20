@@ -8,9 +8,13 @@ const eventSchema = new Schema({
   address: { type: String },
   date: { type: Date },
   category: { type: String },
-  users:[String]
+  users:[String],
+  userCreatedEvent: {type: String },
+  rating: [Number],
+  feedbackUser: [{
+    user: { type: String },
+    feedback: { type: String }
+  }]
 });
-
-// eventSchema.index({ location: '2dsphere' });
 
 module.exports = model('Event', eventSchema);

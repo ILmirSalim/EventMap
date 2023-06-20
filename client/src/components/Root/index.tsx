@@ -25,7 +25,7 @@ export const Root = () => {
       )}
       <NavLink className="pl-[50px] w-1/5" to="/user-profile">Профиль</NavLink>
     </div>
-    <div className="flex justify-center items-center mt-[50px] shadow-2xl shadow-white h-3/4">
+    <div className="flex justify-center items-center mt-[50px] shadow-2xl shadow-white h-screen w-screen">
       <Outlet />
     </div>
   </div>)

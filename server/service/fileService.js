@@ -1,5 +1,5 @@
 const fs = require('fs')
-const file = require('../models/avatar-model')
+const File = require('../models/avatar-model')
 const config = require('../config/default.json')
 
 class FileServer {
@@ -11,6 +11,8 @@ class FileServer {
                 if(!fs.existsSync(filePath)) {
                     fs.mkdirSync(filePath)
                     return resolve({message:'file was created'})
+                } else {
+                    return reject({message:"File already exist"})
                 }
             } catch (error) {
                 return reject({ message: 'File error' })

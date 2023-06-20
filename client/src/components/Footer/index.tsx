@@ -4,7 +4,7 @@ import { FaFacebook, FaTwitter, FaInstagram } from 'react-icons/fa';
 const Footer: React.FC = () => {
   return (
     <footer>
-      <div className="footer-content">
+      <div className="footer-content text-white">
         <div className="contact-info">
           <h3>Наши контакты</h3>
           <p>Email: example@mail.com</p>
@@ -19,7 +19,7 @@ const Footer: React.FC = () => {
         </div>
       </div>
 
-      <div className="privacy-policy">
+      <div className="privacy-policy text-white">
         <a href="/privacy-policy">Политика конфиденциальности</a>
       </div>
     </footer>

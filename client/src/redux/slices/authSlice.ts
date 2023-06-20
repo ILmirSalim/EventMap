@@ -3,7 +3,7 @@ import axios from 'axios';
 
 interface UserProfile {
     email: string;
-    id?: string;
+    _id?: string | undefined ;
   password: string;
   userName: string;
   userAge: string;
@@ -82,47 +82,6 @@ export const login = createAsyncThunk<AuthResponse, UserProfile>(
       }
     }
   );
-  // export const register = createAsyncThunk<AuthResponse, {
-  //   email: string;
-  //   password: string;
-  //   userName: string;
-  //   userAge: number;
-  //   interestsAndPreferences: string;
-  //   avatar: File | undefined
-  // }>(
-  //   'auth/register',
-  //   async ({
-  //     email,
-  //     password,
-  //     userName,
-  //     userAge,
-  //     interestsAndPreferences,
-  //     avatar
-  //   }) => {
-  //     try {
-  //       const response = await axios.post<AuthResponse>(
-  //         'http://localhost:3002/api/registration',
-  //         email,
-  //     password,
-  //     userName,
-  //     userAge,
-  //     interestsAndPreferences,
-  //     avatar
-  //       );
-  //       localStorage.setItem('token', response.data.refreshToken);
-  //       localStorage.setItem('user', JSON.stringify(response.data.user));
-  //       return response.data;
-  //     } catch (error:any) {
-  //       console.log(error);
-        
-  //       // if (error.response) {
-  //       //   return rejectWithValue(error.response.data);
-  //       // }
-  //       // return rejectWithValue({ error: error.message });
-        
-  //     }
-  //   }
-  // );
 
 export const authSlice = createSlice({
   name: 'auth',
