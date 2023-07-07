@@ -16,17 +16,17 @@ routes.post('/registration',
     userController.registration)
 routes.post('/login', userController.loginTwo)
 routes.post('/logout', userController.logout)
-// routes.get('/users', userController.getUsers)
+routes.post('/recoverPassword', userController.recoverPassword)
 
 routes.post('/newevent', eventController.addEvent)
 routes.get('/events', eventController.getAllEvents)
 routes.post('/addUserEvent', eventController.addUserToEvent)
-// routes.get('/searchevents', eventController.searchEvents);
 routes.post('/search', eventController.searchEventsByCategory);
 routes.post('/filterevents', eventController.filterEvents)
 routes.post('/addUserToEvent', eventController.addUserToEvent)
 routes.post('/addFeedbackToEvent', eventController.addFeedbackToEvent)
 routes.post('/removeUserFromEvent', eventController.removeUserFromEvent)
 routes.post('/getEventsByUserId', eventController.getEventsByUserId)
+routes.post('/filterDistance', eventController.filterEvents)
 
 module.exports = routes

@@ -45,9 +45,9 @@ class EventsController {
               user: user,
               feedback: feedback
             },
-            rating: rating 
+            rating: rating
           },
-          
+
         },
         { new: true }
       );
@@ -175,29 +175,21 @@ class EventsController {
 
   async filterEvents(req, res) {
     try {
-      const { distance, type, date } = req.body;
-      const { longitude, latitude } = req.user; // получаем координаты пользователя из объекта req.user
-
-      const currentDate = new Date();
-      const filteredEvents = await EventModel.find({
-        locationType: type,
-        date: { $gte: date },
-        coordinates: {
-          $near: {
-            $geometry: {
-              type: 'Point',
-              coordinates: longitude, latitude,
-            },
-            $maxDistance: distance,
-          },
-        },
+      const { longitude, latitude, distance } = req.body;
+      const events = await Event.find({});
+      const eventsWithinDistance = events.filter(event => {
+        const latDistance = (event.coordinates[0] - latitude) * Math.PI / 180;
+        const lngDistance = (event.coordinates[1] - longitude) * Math.PI / 180;
+        const a = Math.sin(latDistance / 2) * Math.sin(latDistance / 2) +
+          Math.cos(latitude * Math.PI / 180) * Math.cos(event.coordinates[0] * Math.PI / 180) *
+          Math.sin(lngDistance / 2) * Math.sin(lngDistance / 2);
+        const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+        const eventDistance = 6371 * c * 1000; // convert to meters
+        return eventDistance <= distance;
       });
+      // res.json(eventsWithinDistance);
 
-      const filteredEventsByTime = filteredEvents.filter(
-        (event) => event.date.getTime() >= currentDate.getTime()
-      );
-
-      res.status(200).json(filteredEventsByTime);
+      res.status(200).json(eventsWithinDistance);
     } catch (e) {
       console.log('this is error', e.message);
       res.status(400).json({ message: e.message });
@@ -214,19 +206,12 @@ class EventsController {
         title: req.body.title,
         description: req.body.description,
         locationType: req.body.locationType,
-        // location: req.body.location,
         coordinates: req.body.coordinates,
         address: req.body.address,
-        date: req.body.date,
+        day: req.body.day,
+        time: req.body.time,
         category: req.body.category,
         userCreatedEvent: req.body.userCreatedEvent
-
-
-
-        //   coordinates: [Number],
-        //   address: { type: String },
-        //   date: { type: Date },
-        //   category: { type: String },
       })
 
       await eventModel.save()

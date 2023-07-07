@@ -6,7 +6,8 @@ interface Event {
     description: string,
     locationType: string,
     address: string,
-    date: Date,
+    day: Date,
+    time: string,
     category: string,
     coordinates: [number, number];
   }

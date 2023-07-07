@@ -25,11 +25,11 @@ export const FilterEvents: FC<FilterProps> = ({ setDistanceFilter, setTypesFilte
   };
 
   return (
-    <div className="block mt-[20px]">
-      <input type='number' placeholder='Distance' onChange={handleDistanceChange}></input>
-      <input type='text' placeholder='Type' onChange={handleTypesChange}></input>
-      <input type='date' placeholder='Date' onChange={handleDateChange}></input>
-      <input type='number' placeholder='Time' onChange={handleTimeChange}></input>
+    <div className="block mt-[20px] flex justify-center">
+      <input className=' rounded-xl p-[5px] m-[5px] outline-none' type='number' placeholder='Distance' onChange={handleDistanceChange}></input>
+      <input className='rounded-xl p-[5px] m-[5px] outline-none' type='text' placeholder='Type' onChange={handleTypesChange}></input>
+      <input className='rounded-xl p-[5px] m-[5px] outline-none' type='date' placeholder='Date' onChange={handleDateChange}></input>
+      <input className='rounded-xl p-[5px] m-[5px] outline-none hover:shadow-white' type='number' placeholder='Time' onChange={handleTimeChange}></input>
     </div>
   );
 };

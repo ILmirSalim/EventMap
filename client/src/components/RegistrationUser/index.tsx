@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { register, hasUser, logout } from '../../redux/slices/authSlice';
 import { RootState, AppDispatch } from '../../redux/store/store'
+import Chat from './components/chat';
 
 const RegistrationUser: React.FC = () => {
   const [email, setEmail] = useState('');
@@ -57,14 +58,14 @@ const RegistrationUser: React.FC = () => {
   return (
     <>
       {isAuthenticated ? (
-        <>
-          <div>Welcome back</div>
-          <p>Имя пользователя:{user?.userName}</p>
-          <div>Возраст: {user?.userAge}</div>
-          {/* <div className='flex'>Интересы: {user?.interestsAndPreferences.map((interest)=><div className='pl-[5px]' key={interest}>{interest}</div>)}
-            </div> */}
-          <button className='cursor-pointer' onClick={handleLogout}>Logout</button>
-        </>
+        <div className='bg-emerald-500 w-96 h-96  shadow-lg shadow-white flex flex-col items-center justify-center'>
+          <p>Имя пользователя: {user?.userName}</p>
+          <div>Возраст: {user?.userAge} </div>
+          <div>Интересы: {user?.interestsAndPreferences}</div>
+          <button className='cursor-pointer hover:text-white hover:font-bold mt-[20px]' onClick={handleLogout}>Выйти из профиля</button>
+        <Chat/>
+        </div>
+        
       ) : (
         <>
           <form onSubmit={handleRegister} encType='multipart/form-data'>

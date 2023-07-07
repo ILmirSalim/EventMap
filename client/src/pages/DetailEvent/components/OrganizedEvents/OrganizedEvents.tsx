@@ -10,9 +10,10 @@ const OrganizedEvents: React.FC = () => {
   const organizedEvents = events?.filter(event =>
     event.userCreatedEvent.includes(email)
   )
+console.log('events', events);
 
   return (
-    <div className=''>
+    <div className='h-full'>
       {organizedEvents?.map(event => (
         <div key={event._id}>
           <h2>Название события: {event.title}</h2>

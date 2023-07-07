@@ -33,6 +33,22 @@ class UserController {
         }
     };
 
+
+    async recoverPassword(req, res) {
+        try {
+           
+            const { email } = req.body;
+
+            const newPassord = await userService.recoverPassword(email);
+            
+            return res.json(newPassord)
+
+        } catch (e) {
+            console.log(e)
+            res.send({ message: "Server error" })
+        }
+    };
+
     async loginTwo(req, res, next) {
         try {
             const { email, password } = req.body;

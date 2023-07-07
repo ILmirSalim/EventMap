@@ -15,6 +15,7 @@ export const EventDetail = () => {
   const [isLoading, setIsLoading] = useState<boolean>(false)
   const [textFeedback, setTextFeedback] = useState<string>('')
   const [rating, setRating] = useState<number>(0)
+  const [resultRate, setResultRate] = useState<any>(0)
   const { id } = useParams<{ id: string }>();
   const { events } = useSelector((state: { event: EventState }) => state.event);
   const user = useSelector((state: RootState) => state.auth.user)
@@ -23,7 +24,7 @@ export const EventDetail = () => {
   console.log(rating);
 
   const event = events?.find((event: Event) => event._id === id);
-  console.log(event?.users);
+
   const handleChange = (event: any) => {
     setRating(event.target.value);
   };
@@ -31,16 +32,17 @@ export const EventDetail = () => {
     navigate('/search-event');
   };
 
-  function average(array: number[] | undefined) {
+  function average(array: number[]) {
     let sum = 0;
-    for (let i = 0; i < array!.length; i++) {
-      sum += array![i];
+    if (array.length > 0) {
+      for (let i = 0; i < array!.length; i++) {
+        sum += array![i];
+      }
+      let avg = sum / array?.length;
+      return avg.toFixed(1);
     }
-    let avg = sum / array!.length;
-    return avg.toFixed(1);
   }
-  let result = average(event?.rating);
-  
+
   const addUserToEvent = async (eventId: string, userId: string | undefined) => {
     try {
       setIsLoading(true);
@@ -91,24 +93,29 @@ export const EventDetail = () => {
 
     if (event?.users.includes(user?._id as never)) {
       setInEvent(true)
-
     } else {
       setInEvent(false)
     }
-  }, [event?.users, user?._id])
+    if (event?.rating) {
+      setResultRate(average(event!.rating))
+    }
 
+  }, [event?.users, user?._id, event])
+  console.log(resultRate);
   if (!event) {
     return <div>Сообщение не найдено</div>;
   }
 
   return (
     <div className="p-[10px] shadow-lg shadow-white w-2/3 h-[500px]">
-      <h2 className="font-bold">{event.title}</h2>
-      <p>{event.description}</p>
-      <p>{event.locationType}</p>
-      <p>{event.address}</p>
-      <p>Рейтинг мероприятия:</p>
-      <p>{result}</p>
+      <div className="text-white">
+        <h2 className="font-bold"> Название мероприятия: {event.title}</h2>
+        <p>Описание события: {event.description}</p>
+        <p>Местоположение: {event.locationType}</p>
+        <p>Адрес: {event.address}</p>
+        <p>Рейтинг мероприятия:</p>
+        <p>{resultRate && resultRate}</p>
+      </div>
       {isLoading && <p>Загрузка...</p>}
       {!isLoading && !inEvent && (
         <button
@@ -125,19 +132,19 @@ export const EventDetail = () => {
           <svg width="30px" height="30px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
             <path fill-rule="evenodd" clip-rule="evenodd" d="M1.5 12C1.5 6.20101 6.20101 1.5 12 1.5C17.799 1.5 22.5 6.20101 22.5 12C22.5 17.799 17.799 22.5 12 22.5C6.20101 22.5 1.5 17.799 1.5 12ZM15.7127 10.7197C16.0055 10.4268 16.0055 9.95192 15.7127 9.65903C15.4198 9.36614 14.9449 9.36614 14.652 9.65903L10.9397 13.3713L9.34869 11.7804C9.0558 11.4875 8.58092 11.4875 8.28803 11.7804C7.99514 12.0732 7.99514 12.5481 8.28803 12.841L10.4093 14.9623C10.7022 15.2552 11.1771 15.2552 11.47 14.9623L15.7127 10.7197Z" fill="green" />
           </svg>
-          <p>Я участвую!</p>
+          <p className="font-bold color-white">Я участвую!</p>
         </div>
 
         <button
-          className="p-[5px] text-xs bg-red-300"
+          className="p-[5px] text-xs bg-red-600 hover:bg-red-300 hover:font-bold"
           onClick={() => removeUserFromEvent(id!, user?._id)}>
           Отменить участие в мероприятии
         </button>
       </div>}
       <div className="py-[13px]">
         <div>Введите текст комментария:</div>
-        <input className="border pl-4 w-44"
-          placeholder="Введите текст комментария"
+        <input className="border pl-[2px] w-44 outline-none rounded-lg"
+          placeholder="Текст комментария..."
           type="text"
           onChange={(event) => setTextFeedback(event.target.value)} />
       </div>

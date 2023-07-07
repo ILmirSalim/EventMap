@@ -32,7 +32,22 @@ class UserService {
 
         return { ...tokens, user}
     }
-
+    async recoverPassword(email) {
+        const user = await UserModel.findOne({ email });
+        if (!user) {
+          throw new Error(`Пользователь с почтовым адресом ${email} не найден`);
+        }
+    
+        const newPassword = Math.random().toString(36).substring(2, 10); // генерация случайного нового пароля
+    
+        const hashPassword = await bcrypt.hash(newPassword, 3);
+        user.password = hashPassword;
+        await user.save();
+    
+        console.log(`Восстановленный пароль для пользователя ${user.email}: ${newPassword}`);
+    
+        return newPassword;
+      }
     // async activate(activationLink) {
     //     const user = await UserModel.findOne({activationLink})
     //     if(!user) {

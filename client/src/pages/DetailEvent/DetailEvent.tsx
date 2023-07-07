@@ -12,7 +12,7 @@ const EventsTabs: React.FC = () => {
   }
 
   return (
-    <div className='mt-[-500px]'>
+    <div className='h-full'>
       <div className='pb-[20px]'>
         <button className='pr-[10px]' onClick={() => handleTabChange('visited')}>Посещаемые мероприятия</button>
         <button onClick={() => handleTabChange('organized')}>Организуемые мероприятия</button>
