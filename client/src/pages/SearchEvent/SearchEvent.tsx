@@ -82,10 +82,12 @@ export const SearchEvent: React.FC = () => {
     );
   }, [])
   return (
-    <div className='h-[500px] bg-cyan-400 w-[1200px]'>
+    <div className='h-[500px] bg-gradient-to-r from-teal-200 to-lime-200 shadow-xl shadow-white w-[1200px]'>
       <div className='p-[10px]'>
-        <label className='font-bold'>Выберите нужные фильтры: </label>
-        <input className='rounded-xl ml-[10px] p-[5px]' placeholder='Категория' type="text" value={category} onChange={handleCategoryChange} />
+        <label className='font-bold ml-[10px] '>Выберите нужные фильтры: </label>
+        <br />
+        <label className='ml-[10px]'>Категория:</label>
+        <input className='rounded-xl ml-[10px] mt-[10px] p-[5px]' placeholder='Категория' type="text" value={category} onChange={handleCategoryChange} />
         <label className='ml-[10px]'>Заголовок:</label>
         <input className='rounded-xl ml-[10px] p-[5px]' type="text" placeholder='Заголовок' value={title} onChange={(e) => setTitle(e.target.value)} />
         <label className='ml-[10px]'>С даты:</label>
@@ -104,14 +106,15 @@ export const SearchEvent: React.FC = () => {
           value={lastDate ? lastDate.toISOString().slice(0, 10) : ""}
           onChange={(e) => setLastDate(new Date(e.target.value))}
         />
-        <label className='mr-[10px]'>Ввести дистанцию:</label>
+        <br />
+        <label className='mr-[10px] ml-[10px]'>Ввести дистанцию:</label>
         <input
-          className='rounded-xl p-[5px]'
+          className='rounded-xl p-[5px] mt-[10px]'
           value={distance}
           onChange={(e) => setDistance(Number(e.target.value))}
         />
 
-        <button className='ml-[10px] bg-sky-500 p-[5px] rounded-lg hover:' onClick={() => handleSearchClick(title, category, date, lastDate)}>Искать</button>
+        <button className='ml-[10px] p-[5px] rounded-lg bg-gradient-to-r from-green-400 to-cyan-400' onClick={() => handleSearchClick(title, category, date, lastDate)}>Искать</button>
         <button onClick={() => {
           handleSearchDistance(userLocation[0], userLocation[1], distance)
         }}>Искать по дистанции</button>

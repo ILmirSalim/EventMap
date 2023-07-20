@@ -2,14 +2,20 @@ import React from "react";
 import { Outlet, NavLink } from "react-router-dom";
 import { useSelector } from 'react-redux';
 import { RootState } from '../../redux/store/store'
+import Chat from "../RegistrationUser/components/chat";
+import chatImage from '../../images/image.svg'
 // import './style.css'
 
 export const Root = () => {
   const user = useSelector((state: RootState) => state.auth.user)
-  console.log(user);
 
-  return (<div className="pl-[50px] bg-gradient-to-r from-sky-500 to-indigo-500 pr-[50px] ">
-    <div className="flex flex-row items-center shadow-2xl shadow-white">
+  const [isChatOpen, setIsChatOpen] = React.useState<boolean>(false);
+
+  const handleToggleChat = () => {
+    setIsChatOpen(!isChatOpen);
+  }
+  return (<div className="pl-[50px] bg-gradient-to-r from-teal-200 to-lime-200 pr-[50px] ">
+    <div className="flex flex-row items-center shadow-2xl shadow-white  ">
       <svg className="" width="60px" height="60px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
         <path d="M12 8.25C11.5858 8.25 11.25 8.58579 11.25 9C11.25 9.41421 11.5858 9.75 12 9.75C12.4142 9.75 12.75 9.41421 12.75 9C12.75 8.58579 12.4142 8.25 12 8.25Z" fill="#3A52EE" />
         <path fill-rule="evenodd" clip-rule="evenodd" d="M12 3C8.60218 3 6 5.58614 6 8.8125C6 10.6204 6.84017 12.5038 7.91017 14.0845C8.98664 15.6747 10.3653 17.0616 11.584 17.874C11.8359 18.042 12.1641 18.042 12.416 17.874C13.6347 17.0616 15.0134 15.6747 16.0898 14.0845C17.1598 12.5038 18 10.6204 18 8.8125C18 5.58614 15.3978 3 12 3ZM9.75 9C9.75 7.75736 10.7574 6.75 12 6.75C13.2426 6.75 14.25 7.75736 14.25 9C14.25 10.2426 13.2426 11.25 12 11.25C10.7574 11.25 9.75 10.2426 9.75 9Z" fill="white" />
@@ -26,7 +32,18 @@ export const Root = () => {
       <NavLink className="pl-[50px] w-1/5" to="/user-profile">Профиль</NavLink>
     </div>
     <div className="flex justify-around items-center mt-[50px] h-full w-full p-[20px]">
+
       <Outlet />
+      <div onClick={handleToggleChat}>
+        {!isChatOpen && <img className="fixed bottom-0 right-0 p-4" alt="chat" src={chatImage} />}
+      </div>
+      {isChatOpen && <div className="flex flex-col fixed bottom-0 right-0 p-4">
+        <div onClick={handleToggleChat}>Свернуть чат</div>
+        <div className="">
+          <Chat />
+        </div>
+      </div>}
+
     </div>
   </div>)
 }

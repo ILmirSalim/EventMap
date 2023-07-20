@@ -12,8 +12,10 @@ interface Event {
   day: Date,
   time: string,
   category: string,
-  coordinates: [number, number],
-
+  location: {
+    coordinates: [number, number],
+  }
+  // coordinates: [number, number],
 }
 
 export interface EventState {

@@ -7,7 +7,10 @@ export interface Event {
     day: Date,
     time: string,
     category: string,
-    coordinates: [number, number];
+    location: {
+      coordinates: [number, number];
+    }
+    // coordinates: [number, number];
     users: [],
     rating: number[],
     userCreatedEvent: string

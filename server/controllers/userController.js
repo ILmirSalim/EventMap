@@ -33,14 +33,24 @@ class UserController {
         }
     };
 
+    async setAvatar(req, res) {
+        try {
+            const { email } = req.body
+            const user = await userService.updateUserAvatar(email)
+            return res.json(user)
+        } catch (error) {
+            console.log(error)
+            res.send({ message: "Error set avatar" })
+        }
+    }
 
     async recoverPassword(req, res) {
         try {
-           
+
             const { email } = req.body;
 
             const newPassord = await userService.recoverPassword(email);
-            
+
             return res.json(newPassord)
 
         } catch (e) {
