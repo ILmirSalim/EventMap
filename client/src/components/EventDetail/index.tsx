@@ -140,6 +140,7 @@ export const EventDetail = () => {
           onClick={() => removeUserFromEvent(id!, user?._id)}>
           Отменить участие в мероприятии
         </button>
+        
       </div>}
       <div className="py-[13px]">
         <div>Введите текст комментария:</div>

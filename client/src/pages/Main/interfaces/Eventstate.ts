@@ -21,4 +21,7 @@ export interface EventState {
       user: string;
       feedback: string;
     }[]
+    location: {
+      coordinates: [number, number];
+    }
   }

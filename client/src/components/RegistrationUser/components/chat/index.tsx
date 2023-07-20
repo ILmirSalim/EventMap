@@ -51,21 +51,23 @@ const Chat: React.FC = () => {
                 clearTimeout(timeout);
             };
         }
+       
+        
     }, [showNotification]);
     return (
-        <div>
+        <div className='h-48 bg-gradient-to-r from-teal-200 to-lime-200 opacity-90'>
 
             <ul>
                 {messages.map((message, index) => (
                     <div>
-                        <div>{user?.userName}</div>
+                        <div className='font-bold'>Пользователь: {user?.userName}</div>
                         <li key={index}>{message}</li>
                     </div>
 
                 ))}
             </ul>
-            <form onSubmit={sendMessage}>
-                <input type="text" value={input} onChange={handleChange} />
+            <form onSubmit={sendMessage} className=''>
+                <input type="text" value={input} onChange={handleChange} className=''/>
                 <button type="submit">Send</button>
             </form>
             {showNotification && <div className="p-[20px]">New message received</div>}

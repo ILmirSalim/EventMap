@@ -4,8 +4,21 @@ const eventController = require('../controllers/eventController')
 const { check, body } = require("express-validator")
 const authMiddleware = require("../middlewares/authMiddleware")
 const imageMiddlware = require('../middlewares/imageUploads')
-
+const multer = require('multer');
+const path = require('path');
 const routes = new Router()
+
+const storage = multer.diskStorage({
+    destination: (req, file, cb) => {
+      cb(null, 'uploads'); // папка, куда будут сохраняться аватары
+    },
+    filename: (req, file, cb) => {
+      cb(null, `${Date.now()}.${path.extname(file.originalname)}`); // уникальное имя файла с расширением
+    }
+  });
+  
+  // Инициализация multer с указанием хранилища
+  const upload = multer({ storage });
 
 routes.post('/registration',
     imageMiddlware.single('avatar'),
@@ -17,6 +30,7 @@ routes.post('/registration',
 routes.post('/login', userController.loginTwo)
 routes.post('/logout', userController.logout)
 routes.post('/recoverPassword', userController.recoverPassword)
+// routes.post('/api/upload', upload.single('avatar'), userController.setAvatar)
 
 routes.post('/newevent', eventController.addEvent)
 routes.get('/events', eventController.getAllEvents)

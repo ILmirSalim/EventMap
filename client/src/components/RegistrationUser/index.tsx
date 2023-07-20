@@ -3,6 +3,8 @@ import { useDispatch, useSelector } from 'react-redux';
 import { register, hasUser, logout } from '../../redux/slices/authSlice';
 import { RootState, AppDispatch } from '../../redux/store/store'
 import Chat from './components/chat';
+import SetAvatar from '../SetAvatar/index'
+import avatar from '../../images/avatar.svg'
 
 const RegistrationUser: React.FC = () => {
   const [email, setEmail] = useState('');
@@ -10,7 +12,7 @@ const RegistrationUser: React.FC = () => {
   const [userName, setUserName] = useState('');
   const [userAge, setUserAge] = useState('');
   const [interestsAndPreferences, setinterestsAndPreferences] = useState('');
-  const [avatar, setAvatar] = useState<File | undefined>(undefined);
+  const [avatarPath, setAvatar] = useState('');
 
   const dispatch = useDispatch<AppDispatch>()
   const isAuthenticated = useSelector((state: RootState) => state.auth.isAuthenticated);
@@ -26,7 +28,7 @@ const RegistrationUser: React.FC = () => {
         userName,
         userAge: parseInt(userAge),
         interestsAndPreferences,
-        avatar
+        avatarPath
       })).unwrap();
       alert("Регистрация прошла успешно");
 
@@ -47,7 +49,7 @@ const RegistrationUser: React.FC = () => {
   const handleLogout = () => {
     dispatch(logout())
   };
-  console.log(avatar);
+
   useEffect(() => {
     const user = localStorage.getItem('token')
 
@@ -58,16 +60,28 @@ const RegistrationUser: React.FC = () => {
   return (
     <>
       {isAuthenticated ? (
-        <div className='bg-emerald-500 w-96 h-96  shadow-lg shadow-white flex flex-col items-center justify-center'>
+        <div className='bg-gradient-to-r from-teal-200 to-lime-200  
+        w-96 h-96  shadow-lg shadow-white flex flex-col items-center 
+        justify-center'>
+          {/* {!user?.avatar && <img src={avatar} alt="Avatar" />} */}
+          <SetAvatar />
           <p>Имя пользователя: {user?.userName}</p>
           <div>Возраст: {user?.userAge} </div>
           <div>Интересы: {user?.interestsAndPreferences}</div>
-          <button className='cursor-pointer hover:text-white hover:font-bold mt-[20px]' onClick={handleLogout}>Выйти из профиля</button>
-        <Chat/>
+          <div>
+            <button
+              className='cursor-pointer hover:text-white hover:font-bold 
+              bg-gradient-to-r from-green-400 to-cyan-400 mt-[20px] rounded-xl p-[5px]'
+              onClick={handleLogout}>Выйти из профиля</button>
+            <button className='cursor-pointer hover:text-white bg-gradient-to-r from-green-400 to-cyan-400
+             hover:font-bold ml-[10px] mt-[20px] p-[5px] rounded-xl' >
+              Удалить профиль</button>
+          </div>
         </div>
-        
+
       ) : (
         <>
+          <div>Зарегистрироваться</div>
           <form onSubmit={handleRegister} encType='multipart/form-data'>
             <input
               type="email"
@@ -99,7 +113,7 @@ const RegistrationUser: React.FC = () => {
               onChange={(e) => setinterestsAndPreferences(e.target.value)}
               placeholder="Enter interestsAndPreferences"
             />
-            <input
+            {/* <input
               type="file"
               accept=".png,.jpg,.jpeg" // Добавьте ограничение на тип файла, который может быть загружен
               onChange={(e) => {
@@ -107,7 +121,7 @@ const RegistrationUser: React.FC = () => {
                   setAvatar(e.target.files[0]); // Сохраняем выбранный файл в состоянии
                 }
               }}
-            />
+            /> */}
             <button className='cursor-pointer' type="submit">Register</button>
           </form>
         </>

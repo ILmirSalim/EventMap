@@ -14,6 +14,7 @@ const UserSchema = new Schema({
     diskSpace: { type: Number },
     usedSpace: { type: Number },
     avatar: {type:String},
+    avatarPath:{type:String},
     files: [{type: ObjectId, ref: "File" }]
 })
 

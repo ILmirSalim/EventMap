@@ -4,8 +4,19 @@ const eventSchema = new Schema({
   title: { type: String, required: true },
   description: { type: String },
   locationType: { type: String },
-  location: {type:['Point']},
-  coordinates: [Number],
+  // location: {type:['Point']},
+  location: {
+    type: {
+      type: String, 
+      enum: ['Point'],
+      
+    },
+    coordinates: {
+      type: [Number],
+      
+    }
+  },
+  // coordinates: [Number],
   address: { type: String },
   day: { type: Date },
   time: { type: String },

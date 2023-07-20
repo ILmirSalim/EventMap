@@ -26,7 +26,7 @@ const VisitedEvents: React.FC = () => {
     }, [user?._id])
 
     return (
-        <div className=''>
+        <div className='h-full'>
             {events.length===0 && <div>Нет событий в которых учавствует пользователь</div>}
             <div className='flex'>
                 {events && events.map((event) => <div key={event._id} className='h-16 w-36 bg-lime-600'>

@@ -3,6 +3,7 @@ import axios from 'axios';
 import { useDispatch, useSelector } from 'react-redux';
 import { login } from '../../redux/slices/authSlice';
 import { RootState, AppDispatch } from '../../redux/store/store'
+import UserCredentials from './interface/userCredentails'
 
 interface User {
   email: string;
@@ -10,14 +11,6 @@ interface User {
   userName: string;
   userAge: string;
   interestsAndPreferences: string[];
-}
-
-interface UserCredentials {
-  email: string;
-  password: string;
-  userName: string;
-  userAge: string;
-  interestsAndPreferences: string;
 }
 
 const AuthComponent: React.FC = () => {
@@ -29,6 +22,7 @@ const AuthComponent: React.FC = () => {
     interestsAndPreferences: '',
     email: '',
     password: '',
+    avatarPath: ''
   })
 
   const dispatch = useDispatch<AppDispatch>()
@@ -101,6 +95,7 @@ const AuthComponent: React.FC = () => {
              
             // </form>
             }
+            
         </>
       )}
     </>

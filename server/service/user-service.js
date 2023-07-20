@@ -7,55 +7,56 @@ const file = require('../models/avatar-model')
 
 class UserService {
 
-    async registration(email, password, userName, userAge, interestsAndPreferences, avatar) {
+    async registration(email, password, userName, userAge, interestsAndPreferences) {
         const candidate = await UserModel.findOne({ email })
         if (candidate) {
             throw new Error(`Пользователь с почтовым адресом ${email} уже существует`)
         }
         const hashPassword = await bcrypt.hash(password, 3)
-        
-        // const activationLink = uuid.v4()
-        // const user = await UserModel.create({ email, password: hashPassword,})
-        const user = await UserModel.create({ 
+
+        const user = await UserModel.create({
             userName,
             userAge,
-            email, 
+            email,
             password: hashPassword,
             interestsAndPreferences,
-          })
-        // await mailService.sendActivationMail(email, `${process.env.API_URL}/api/activate/${activationLink}`)
-        // console.log(`${process.env.API_URL}/api/activate/${activationLink}`);
-          await fileService.createDir(new File({user: user.id}))
+        })
+        // await fileService.createDir(new File({ user: user.id }))
         // const userDto = new UserDto(user);
         const tokens = tokenService.generateTokens({ user });
         await tokenService.saveToken(user.id, tokens.refreshToken);
 
-        return { ...tokens, user}
+        return { ...tokens, user }
     }
     async recoverPassword(email) {
         const user = await UserModel.findOne({ email });
         if (!user) {
-          throw new Error(`Пользователь с почтовым адресом ${email} не найден`);
+            throw new Error(`Пользователь с почтовым адресом ${email} не найден`);
         }
-    
+
         const newPassword = Math.random().toString(36).substring(2, 10); // генерация случайного нового пароля
-    
+
         const hashPassword = await bcrypt.hash(newPassword, 3);
         user.password = hashPassword;
         await user.save();
-    
+
         console.log(`Восстановленный пароль для пользователя ${user.email}: ${newPassword}`);
-    
+
         return newPassword;
-      }
-    // async activate(activationLink) {
-    //     const user = await UserModel.findOne({activationLink})
-    //     if(!user) {
-    //         throw new Error('Некорректная ссылка активации')
-    //     }
-    //     user.isActivated = true;
-    //     await user.save()
-    // }
+    }
+
+    async updateUserAvatar(email) {
+        try {
+            const updatedUser = await User.findOneAndUpdate(
+                { email: email },
+                { avatar: url },
+                { new: true }
+            );
+            return updatedUser
+        } catch (error) {
+            console.error('Произошла ошибка при сохранении аватара:', error);
+        }
+    }
 
     async logout(refreshToken) {
         const token = await tokenService.removeToken(refreshToken);
