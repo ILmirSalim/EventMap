@@ -30,6 +30,7 @@ routes.post('/registration',
 routes.post('/login', userController.loginTwo)
 routes.post('/logout', userController.logout)
 routes.post('/recoverPassword', userController.recoverPassword)
+routes.delete('/deleteUser', userController.deleteUser)
 // routes.post('/api/upload', upload.single('avatar'), userController.setAvatar)
 
 routes.post('/newevent', eventController.addEvent)

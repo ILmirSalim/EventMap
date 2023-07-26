@@ -45,6 +45,13 @@ class UserService {
         return newPassword;
     }
 
+    async deleteUser(email) {
+        const user = await UserModel.findOneAndDelete({ email });
+        console.log('emai -', email);
+       
+        return console.log('Пользователь удален!');;
+    }
+
     async updateUserAvatar(email) {
         try {
             const updatedUser = await User.findOneAndUpdate(

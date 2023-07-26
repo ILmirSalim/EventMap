@@ -44,6 +44,17 @@ class UserController {
         }
     }
 
+    async deleteUser(req, res) {
+        try {
+            const { email } = req.body
+            await userService.deleteUser(email)
+            
+        } catch (error) {
+            console.log(error)
+            res.send({ message: "Error delete user" })
+        }
+    }
+
     async recoverPassword(req, res) {
         try {
 

@@ -13,7 +13,8 @@ const OrganizedEvents: React.FC = () => {
 console.log('events', events);
 
   return (
-    <div className='h-full'>
+    <div className='flex flex-wrap justify-center items-center'>
+      {organizedEvents?.length ===0 && <div>Нет организуемых событий...</div>}
       {organizedEvents?.map(event => (
         <div key={event._id}>
           <h2>Название события: {event.title}</h2>

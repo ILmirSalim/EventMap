@@ -44,12 +44,8 @@ export const CreateEvent = () => {
         type: {
           type: point,
         },
-        coordinates: coordinates, 
+        coordinates: coordinates,
       },
-      // location: {
-      //   coordinates: coordinates,
-      // },
-      // coordinates: coordinates,
       address: address,
       day: day,
       time: time,
@@ -61,10 +57,7 @@ export const CreateEvent = () => {
       dispatch(addEvent(newEvent));
       dispatch(getAllEvents())
       socket.emit('create event', newEvent)
-      // toast.success('Событие успешно добавлено!');
-      // alert('Событие успешно добавлено!')
       setShowNotification(true)
-      console.log(newEvent);
       
     } catch (error) {
       console.error(error);
@@ -87,15 +80,13 @@ export const CreateEvent = () => {
 
   useEffect(() => {
     const handleEvent = () => {
-      // setMessages((prevMessages) => [...prevMessages, msg]);  
-    //   toast.info('New message received'); 
-      setShowNotification(true)         
+      setShowNotification(true)
     };
-    
+
     socket.on('create event', handleEvent);
-    
+
     console.log('Listening to chat message!');
-    
+
     return () => {
       console.log('Stopping listening to chat message!');
       socket.off('create event', handleEvent);
@@ -104,9 +95,9 @@ export const CreateEvent = () => {
     //   if (event) {
     //     setShowNotification(true)
     //   }
-      
+
     // });
-  
+
     // return () => {
     //   socket.disconnect(); // Очистка путем отключения сокета при размонтировании компонента
     // };
@@ -114,66 +105,87 @@ export const CreateEvent = () => {
 
   useEffect(() => {
     if (showNotification) {
-        const timeout = setTimeout(() => {
-            setShowNotification(false);
-        }, 10000);
+      const timeout = setTimeout(() => {
+        setShowNotification(false);
+      }, 10000);
 
-        return () => {
-            clearTimeout(timeout);
-        };
+      return () => {
+        clearTimeout(timeout);
+      };
     }
-}, [showNotification]);
+  }, [showNotification]);
 
   return (
-    <div className='flex justify-center items-center ml-[-70px]'>
+    <div className='flex justify-center items-center  shadow-xl shadow-white w-[1200px]'>
       <div>
-        
-        <h1 className='font-bold pl-[-10px]'>Введите данные о событии:</h1>
-        <form onSubmit={handleSubmit}>
+        <h1 className='font-bold pl-[-10px] mb-[10px]'>Введите данные о событии:</h1>
+        <form onSubmit={handleSubmit} className='flex flex-col items-center w-[200px]'>
           <label className=''>
-            Заголовок:
-            <input className='mt-[10px] ml-[10px] rounded-xl outline-none' type="text" value={title} onChange={(e) => setTitle(e.target.value)} />
+            Название события:
           </label>
-          <br />
+          <input className=' mb-[10px] rounded-xl outline-none p-[5px]'
+            type="text"
+            value={title}
+            onChange={(e) => setTitle(e.target.value)} />
+
           <label>
             Описание:
-            <input className='mt-[10px] ml-[10px] rounded-xl outline-none' type="text" value={description} onChange={(e) => setDescription(e.target.value)} />
           </label>
-          <br />
-          <label className='flex mt-[10px] mb-[-12px] '>
+          <input className='rounded-xl outline-none p-[5px]'
+            type="text"
+            value={description}
+            onChange={(e) => setDescription(e.target.value)} />
+
+          <label className='mt-[10px]  '>
             Тип местоположения:
-            <input className='ml-[10px]  rounded-xl outline-none' type="text" value={locationType} onChange={(e) => setLocationType(e.target.value)} />
+
           </label>
-          <br />
+          <input className=' mb-[5px]  rounded-xl outline-none p-[5px]'
+            type="text"
+            value={locationType}
+            onChange={(e) => setLocationType(e.target.value)} />
+
           <label>
             Адрес:
-            <input className='ml-[10px] rounded-xl outline-none' type="text" value={address} onChange={(e) => setAddress(e.target.value)} />
           </label>
-          <br />
+          <input className=' mb-[5px]  rounded-xl outline-none p-[5px]'
+            type="text" value={address}
+            onChange={(e) => setAddress(e.target.value)} />
+
           <label>
             Дата:
-            <input className='mt-[10px] ml-[10px] rounded-xl outline-none' type="date" value={day} onChange={(e) => setDay(e.target.value)} />
           </label>
-          <br />
+          <input className='mb-[5px] rounded-xl outline-none p-[5px]'
+            type="date"
+            value={day}
+            onChange={(e) => setDay(e.target.value)} />
+
           <label >
             Время события:
-            <input className='ml-[10px] mt-[10px] rounded-xl outline-none' type="time" value={time} onChange={(e) => setTime(e.target.value)} />
           </label>
-          <br />
+          <input className='w-full mb-[5px] text-center  rounded-xl outline-none p-[5px]'
+            type="time"
+            value={time}
+            onChange={(e) => setTime(e.target.value)} />
+
           <label>
             Категория:
-            <input className='ml-[10px] mt-4 rounded-xl outline-none' type="text" value={category} onChange={(e) => setCategory(e.target.value)} />
           </label>
-          <br />
+          <input className='w-full  mb-[5px]  rounded-xl outline-none p-[5px]'
+            type="text"
+            value={category}
+            onChange={(e) => setCategory(e.target.value)} />
+
           <button
-            className='mt-4 mb-4 bg-gradient-to-r from-green-400 to-cyan-400  
+            className='mt-4 mb-4 w-full bg-gradient-to-r from-green-400 to-cyan-400
+            hover:scale-110 transform transition-all duration-200   
             hover:text-white active:bg-violet-700 focus:outline-none 
             focus:ring focus:ring-violet-300 rounded-xl outline-none p-[5px]'
             type="submit">Создать событие</button>
         </form>
       </div>
 
-      <div className='ml-[30px]'>
+      <div className='ml-[80px] mb-[50px]'>
         <div className='block mb-[10px]'>
           <p className='font-bold pl-[10px]'>Выберите место события:</p>
           <p className='font-bold pl-[10px]'>*кликните по карте</p>
@@ -221,10 +233,11 @@ export const CreateEvent = () => {
         </div>
       </div>
       {showNotification && (
-    <div style={{ position: 'fixed', bottom: 20, right: 20, padding: 10, background: 'gray', color: 'white' }}>
-        Событие успешно добавлено!
-    </div>
-)}
+        <div style={{ position: 'fixed', bottom: 20, right: 20, padding: 10, background: 'gray', color: 'white' }}>
+          Событие успешно добавлено!
+          
+        </div>
+      )}
     </div>
   );
 };

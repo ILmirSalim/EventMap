@@ -14,6 +14,7 @@ import DetailEvent from './pages/DetailEvent/DetailEvent';
 import SearchEvent from './pages/SearchEvent/SearchEvent';
 import UserProfile from './pages/UserProfile/UserProfile';
 import { EventDetail } from './components/EventDetail/index';
+import AuthComponent from './components/Auth';
 
 
 const router = createBrowserRouter([
@@ -45,6 +46,10 @@ const router = createBrowserRouter([
         path: "/event/:id",
         element: <EventDetail/>,
       },
+      {
+        path: "/authorization",
+        element: <AuthComponent/>,
+      }
     ],
   },
 ]);

@@ -6,7 +6,7 @@ export const UserProfile: React.FC = () => {
 
   return (
     <div>
-      <AuthComponent/>
+      {/* <AuthComponent/> */}
       <RegistrationUser/>
     </div>
   );

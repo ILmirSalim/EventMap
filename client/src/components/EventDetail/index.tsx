@@ -107,7 +107,7 @@ export const EventDetail = () => {
   }
 
   return (
-    <div className="p-[10px] shadow-lg shadow-white w-2/3 h-[500px]">
+    <div className="p-[10px] shadow-lg shadow-white w-2/3 h-[500px] bg-gradient-to-r from-green-400 to-cyan-400 ">
       <div className="text-white">
         <h2 className="font-bold"> Название мероприятия: {event.title}</h2>
         <p>Описание события: {event.description}</p>
