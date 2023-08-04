@@ -4,7 +4,6 @@ const eventSchema = new Schema({
   title: { type: String, required: true },
   description: { type: String },
   locationType: { type: String },
-  // location: {type:['Point']},
   location: {
     type: {
       type: String, 
@@ -16,7 +15,6 @@ const eventSchema = new Schema({
       
     }
   },
-  // coordinates: [Number],
   address: { type: String },
   day: { type: Date },
   time: { type: String },

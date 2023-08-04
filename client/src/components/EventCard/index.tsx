@@ -10,24 +10,25 @@ interface EventState {
   event: Event | null;
   events: Event[] | null;
 }
-export const EventDetail = () => {
+export const EventCard = () => {
   const [inEvent, setInEvent] = useState<boolean>(false)
   const [isLoading, setIsLoading] = useState<boolean>(false)
   const [textFeedback, setTextFeedback] = useState<string>('')
   const [rating, setRating] = useState<number>(0)
   const [resultRate, setResultRate] = useState<any>(0)
+
   const { id } = useParams<{ id: string }>();
   const { events } = useSelector((state: { event: EventState }) => state.event);
   const user = useSelector((state: RootState) => state.auth.user)
   const dispatch = useDispatch<AppDispatch>()
   const navigate = useNavigate()
-  console.log(rating);
-
+  
   const event = events?.find((event: Event) => event._id === id);
 
-  const handleChange = (event: any) => {
-    setRating(event.target.value);
+  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setRating(+event.target.value);
   };
+  
   const handleNavigate = () => {
     navigate('/search-event');
   };
@@ -187,4 +188,4 @@ export const EventDetail = () => {
   );
 };
 
-export default EventDetail
+export default EventCard

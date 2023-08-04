@@ -35,6 +35,7 @@ io.on('connection', function (socket) {
   socket.on('create event', function  (event) {
     
     io.emit('create event', event);
+    io.emit('event added')
   });
 });
 
@@ -48,6 +49,7 @@ app.use(cookieParser())
 app.use('/api', routes)
 app.use('/api/files', fileRouter)
 app.use(express.static('uploads'));
+
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
     cb(null, 'uploads');
@@ -85,11 +87,11 @@ app.post('/api/upload', upload.single('avatar'), async (req, res) => {
       },
       { new: true }
     );
-    console.log('userid', userId);
+    
     if (!updatedUser) {
       throw new Error('Пользователь не найден');
     }
-    console.log(updatedUser);
+    
     await updatedUser.save();
 
     res.json(updatedUser);

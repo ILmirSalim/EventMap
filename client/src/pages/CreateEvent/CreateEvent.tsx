@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useMemo, useCallback } from 'react';
 import { YMaps, Map, Placemark, GeolocationControl } from "@pbe/react-yandex-maps";
 import { useDispatch, useSelector } from 'react-redux';
 import { addEvent, getAllEvents } from '../../redux/slices/eventSlice';
@@ -28,14 +28,15 @@ export const CreateEvent = () => {
   const { events } = useSelector((state: { event: EventState }) => state.event);
   const ENDPOINT = 'http://localhost:3002';
   const socket = socketIOClient(ENDPOINT);
-  const handleMapClick2 = (event: any) => {
+
+  const setPlacemarkInMap = (event: any) => {
     const clickedCoordinates = [event.get('coords')[0], event.get('coords')[1]];
     setCoordinates(clickedCoordinates);
     setPlacemarkCoordinates([event.get('coords')[0], event.get('coords')[1]]);
   };
-  const point = "Point"
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+    const point = "Point"
     const newEvent = {
       title: title,
       description: description,
@@ -77,43 +78,38 @@ export const CreateEvent = () => {
     setUserCreatedEvent(user?.email)
     dispatch(getAllEvents());
   }, [dispatch, user?.email]);
+  
+  // useEffect(() => {
+  //   const handleEvent = () => {
+  //     setShowNotification(true)
+  //   };
 
-  useEffect(() => {
-    const handleEvent = () => {
-      setShowNotification(true)
-    };
+  //   socket.on('create event', handleEvent);
 
-    socket.on('create event', handleEvent);
+  //   console.log('Listening to chat message!');
 
-    console.log('Listening to chat message!');
-
-    return () => {
-      console.log('Stopping listening to chat message!');
-      socket.off('create event', handleEvent);
-    };
-    // socket.on('create event', (event) => {
-    //   if (event) {
-    //     setShowNotification(true)
-    //   }
-
+  //   return () => {
+  //     console.log('Stopping listening to chat message!');
+  //     socket.off('create event', handleEvent);
+  //   };
     // });
 
     // return () => {
     //   socket.disconnect(); // Очистка путем отключения сокета при размонтировании компонента
     // };
-  }, [showNotification, socket]);
+  // }, [showNotification, socket]);
 
-  useEffect(() => {
-    if (showNotification) {
-      const timeout = setTimeout(() => {
-        setShowNotification(false);
-      }, 10000);
+  // useEffect(() => {
+  //   if (showNotification) {
+  //     const timeout = setTimeout(() => {
+  //       setShowNotification(false);
+  //     }, 10000);
 
-      return () => {
-        clearTimeout(timeout);
-      };
-    }
-  }, [showNotification]);
+  //     return () => {
+  //       clearTimeout(timeout);
+  //     };
+  //   }
+  // }, [showNotification]);
 
   return (
     <div className='flex justify-center items-center  shadow-xl shadow-white w-[1200px]'>
@@ -155,7 +151,7 @@ export const CreateEvent = () => {
           <label>
             Дата:
           </label>
-          <input className='mb-[5px] rounded-xl outline-none p-[5px]'
+          <input className='mb-[5px] rounded-xl outline-none p-[5px] w-full text-center'
             type="date"
             value={day}
             onChange={(e) => setDay(e.target.value)} />
@@ -163,7 +159,7 @@ export const CreateEvent = () => {
           <label >
             Время события:
           </label>
-          <input className='w-full mb-[5px] text-center  rounded-xl outline-none p-[5px]'
+          <input className='w-full mb-[5px] text-center rounded-xl outline-none p-[5px]'
             type="time"
             value={time}
             onChange={(e) => setTime(e.target.value)} />
@@ -194,7 +190,7 @@ export const CreateEvent = () => {
           <YMaps>
             <Map className=''
               defaultState={{ center: userLocation, zoom: 10 }}
-              onClick={handleMapClick2}
+              onClick={setPlacemarkInMap}
               style={{ width: "500px", height: "500px" }}
             >
               {events && events.map((event: Event) => (

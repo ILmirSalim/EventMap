@@ -28,12 +28,10 @@ const Chat: React.FC = () => {
     useEffect(() => {
         const handleMessage = (msg: string) => {
           setMessages((prevMessages) => [...prevMessages, msg]);  
-          setShowNotification(true)         
+        //   setShowNotification(true)         
         };
         
         socket.on('chat message', handleMessage);
-        
-        console.log('Listening to chat message!');
         
         return () => {
           console.log('Stopping listening to chat message!');
@@ -41,18 +39,18 @@ const Chat: React.FC = () => {
         };
     }, []);
 
-    useEffect(() => {
-        if (showNotification) {
-            const timeout = setTimeout(() => {
-                setShowNotification(false); // Скрыть уведомление через 4 секунды
-            }, 4000);
+    // useEffect(() => {
+    //     if (showNotification) {
+    //         const timeout = setTimeout(() => {
+    //             setShowNotification(false); // Скрыть уведомление через 4 секунды
+    //         }, 4000);
 
-            return () => {
-                clearTimeout(timeout);
-            };
-        }
+    //         return () => {
+    //             clearTimeout(timeout);
+    //         };
+    //     }
        
-    }, [showNotification]);
+    // }, [showNotification]);
     return (
         <div className='h-48 bg-gradient-to-r from-teal-200 to-lime-200 opacity-90'>
 

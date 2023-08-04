@@ -3,7 +3,7 @@
 @tailwind utilities;
 
 .active{
-  @apply bg-blue-500 hover:bg-blue-700 text-white font-bold rounded;
+  @apply text-green-700 shadow-lg shadow-white font-bold rounded;
 }
 body {
   margin: 0;

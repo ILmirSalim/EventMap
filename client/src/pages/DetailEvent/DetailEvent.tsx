@@ -15,11 +15,11 @@ const EventsTabs: React.FC = () => {
     <div className='h-screen '>
       <div className='pb-[20px] flex justify-center  items-center'>
         <button className='mr-[40px] p-[5px] rounded-xl outline-none bg-gradient-to-r from-green-400 to-cyan-400 
-        hover:scale-110 transform transition-all duration-200 ' 
+        hover:scale-110 transform transition-all duration-200 shadow-xl shadow-white' 
         onClick={() => handleTabChange('visited')}>Посещаемые мероприятия</button>
 
         <button className=' p-[5px] rounded-xl outline-none bg-gradient-to-r from-green-400 to-cyan-400 
-        hover:scale-110 transform transition-all duration-200 ' 
+        hover:scale-110 transform transition-all duration-200 shadow-xl shadow-white' 
         onClick={() => handleTabChange('organized')}>Организуемые мероприятия</button>
       </div>
       {activeTab === 'visited' && <VisitedEvents/>}

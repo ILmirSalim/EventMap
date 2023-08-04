@@ -40,7 +40,10 @@ export const SearchEvent: React.FC = () => {
     title: string,
     category: string,
     startDate: Date | null,
-    endDate: Date | null
+    endDate: Date | null,
+    // longitude: number,
+    // latitude: number,
+    // distance: number
   ) => {
     try {
       const response = await axios.post<Event[]>(
@@ -49,10 +52,13 @@ export const SearchEvent: React.FC = () => {
           title: title,
           category: category,
           startDate: startDate,
-          endDate: endDate
+          endDate: endDate,
+          // longitude: longitude,
+          // latitude: latitude,
+          // distance: distance
         }
       );
-
+      
       setEvents(response.data);
     } catch (error) {
       console.log(error);

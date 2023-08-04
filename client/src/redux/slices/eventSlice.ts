@@ -3,8 +3,6 @@ import { eventAPI } from '../Api';
 
 
 interface Event {
-  // id: string;
-  // userCreatedEvent: string
   title: string,
   description: string,
   locationType: string,
@@ -14,8 +12,7 @@ interface Event {
   category: string,
   location: {
     coordinates: [number, number],
-  }
-  // coordinates: [number, number],
+  } 
 }
 
 export interface EventState {

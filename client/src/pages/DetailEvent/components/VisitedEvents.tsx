@@ -14,27 +14,29 @@ const VisitedEvents: React.FC = () => {
 
             const response = await axios.post('http://localhost:3002/api/getEventsByUserId', { userId })
             //   dispatch(getAllEvents())
-            
+
             setEvents(response.data)
             // return response.data;
         } catch (error) {
             console.log(error);
         }
     };
-    useEffect(()=> {
+    useEffect(() => {
         getUserEvents(user?._id)
     }, [user?._id])
 
     return (
-        <div className='shadow-xl shadow-white w-[1200px] flex justify-center'>
-            {events.length===0 && <div>Нет событий в которых участвует пользователь</div>}
+        <div className='shadow-xl shadow-white w-[1200px] h-full flex justify-center'>
+            {events.length === 0 && <div>Нет событий в которых участвует пользователь</div>}
             <div className='flex'>
-                {events && events.map((event) => <div key={event._id} className='h-16 w-36 bg-lime-600'>
-                    <div className='p-[5px]'>{event.title}</div>
-                    <div className='p-[5px]'>{event.category}</div>
-                    <Link to={`/event/${event._id}`}>Перейти в событие...</Link>
+                {events && events.map((event) => <div key={event._id} className='flex flex-col 
+                justify-center text-center items-center h-48 w-48 
+                bg-gradient-to-r from-green-400 to-cyan-400 rounded-xl 
+                hover:scale-110 transform transition-all duration-200 shadow-xl shadow-white'>
+                    <div className='p-[5px]'>Название события:{event.title}</div>
+                    <div className='p-[5px]'>Категория события:{event.category}</div>
+                    <Link to={`/event/${event._id}`} className='font-bold text-white'>Перейти в событие...</Link>
                 </div>)}
-                
             </div>
         </div>
     );
