@@ -1,27 +1,9 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { eventAPI } from '../Api';
+import IEvent from './interface/IEvent'
+import IEventState from './interface/IEventState'
 
-
-interface Event {
-  title: string,
-  description: string,
-  locationType: string,
-  address: string, 
-  day: Date,
-  time: string,
-  category: string,
-  location: {
-    coordinates: [number, number],
-  } 
-}
-
-export interface EventState {
-  status: 'idle' | 'loading' | 'succeeded';
-  event: Event | null;
-  events: Event[] | null
-}
-
-const initialState: EventState = {
+const initialState: IEventState = {
   status: 'idle',
   event: null,
   events: []
@@ -29,7 +11,7 @@ const initialState: EventState = {
 
 export const addEvent = createAsyncThunk(
   'event/create',
-  async (newEvent: Event) => {
+  async (newEvent: IEvent) => {
     return await eventAPI.createEvent(newEvent)
   }
 )

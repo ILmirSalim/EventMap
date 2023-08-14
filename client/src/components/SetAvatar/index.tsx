@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { RootState, } from '../../redux/store/store'
 import {  useSelector } from 'react-redux';
-import avatar from '../../images/avatar.svg'
+import avatar from '../../assets/avatar.svg'
 
 export const AvatarUpload = () => {
   const [selectedFile, setSelectedFile] = useState<File>();

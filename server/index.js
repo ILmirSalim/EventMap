@@ -14,34 +14,58 @@ require('dotenv').config()
 const app = express()
 const http = require('http').Server(app)
 const io = require('socket.io')(http, {
-    cors: {
-        origin: 'http://localhost:3000'
-    }
+  cors: {
+    origin: 'http://localhost:3000'
+  }
 })
 
 app.use(express.static('public'));
+
+// const users = [];
 io.on('connection', function (socket) {
 
-  console.log('A user connected');
+  console.log(`${socket.id} user connected`);
+
   socket.on('disconnect', function () {
-    console.log('A user disconnected');
+    console.log(`${socket.id} user disconnected`);
   });
 
-  socket.on('chat message', function (msg) {
-    
-    io.emit('chat message', msg);
+  socket.on('chat message', function (data) {
+
+    io.emit('responce', data);
+    console.log(data);
   });
 
-  socket.on('create event', function  (event) {
+// //   socket.on('create event', function (event) {
+
+// //     io.emit('responceEvent', event);
+
+// //   });
+
+//   // socket.on('authenticate', (data) => {
+//   //   const user = {
+//   //       id: socket.id,
+//   //       name: data.name,
+//   //   };
     
-    io.emit('create event', event);
-    io.emit('event added')
-  });
+//   //   users.push(user);
+    
+//   //   // Отправка обновленного списка пользователей всем подключенным клиентам
+//   //   io.emit('user list', users);
+//   //   console.log('user list', users);
+//   //   socket.on('disconnect', () => {
+//   //       const index = users.findIndex((u) => u.id === socket.id);
+//   //       if (index !== -1) {
+//   //           users.splice(index, 1);
+//   //           io.emit('user list', users);
+//   //       }
+//   //   });
+//   // });
 });
 
 app.use(cors({
-    credentials: true,
-    origin: process.env.CLIENT_URL
+  credentials: true,
+  origin: process.env.CLIENT_URL
 }))
 
 app.use(express.json())
@@ -56,7 +80,6 @@ const storage = multer.diskStorage({
   },
   filename: (req, file, cb) => {
     const uniqueFilename = `${uuidv4()}.${path.extname(file.originalname)}`
-    // const uniqueFilename = `${Date.now()}.${path.extname(file.originalname)}`;
     cb(null, uniqueFilename);
   },
 })
@@ -72,8 +95,8 @@ const upload = multer({ storage });
 
 app.post('/api/upload', upload.single('avatar'), async (req, res) => {
   try {
-    const userId  = req.body._id;
-    const file  = req.file;
+    const userId = req.body._id;
+    const file = req.file;
     const { path } = file;
     if (!file) {
       throw new Error('Файл не загружен');
@@ -81,17 +104,17 @@ app.post('/api/upload', upload.single('avatar'), async (req, res) => {
 
     const updatedUser = await User.findByIdAndUpdate(
       userId,
-      { 
+      {
         avatar: path,
         avatarPath: path
       },
       { new: true }
     );
-    
+
     if (!updatedUser) {
       throw new Error('Пользователь не найден');
     }
-    
+
     await updatedUser.save();
 
     res.json(updatedUser);
@@ -103,17 +126,15 @@ app.post('/api/upload', upload.single('avatar'), async (req, res) => {
   }
 });
 
-
-
 const PORT = process.env.PORT || 3001
 
-const start = async() => {
-    try {
-        await mongoose.connect(process.env.DB_CONNECT)
-        http.listen(PORT, () => console.log(`Server started on port - ${PORT}`))
-    } catch (error) {
-        console.log(error)
-    }
+const start = async () => {
+  try {
+    await mongoose.connect(process.env.DB_CONNECT)
+    http.listen(PORT, () => console.log(`Server started on port - ${PORT}`))
+  } catch (error) {
+    console.log(error)
+  }
 }
 
 start()

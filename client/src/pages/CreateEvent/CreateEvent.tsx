@@ -4,10 +4,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { addEvent, getAllEvents } from '../../redux/slices/eventSlice';
 import { AppDispatch, RootState } from '../../redux/store/store'
 import { Event, EventState } from './interfaces';
-// import { ToastContainer } from 'react-toastify';
-// import { toast } from 'react-toastify';
 import socketIOClient from 'socket.io-client';
-
 
 export const CreateEvent = () => {
   const [title, setTitle] = useState('');
@@ -26,8 +23,8 @@ export const CreateEvent = () => {
   const user = useSelector((state: RootState) => state.auth.user)
   const dispatch: AppDispatch = useDispatch<AppDispatch>()
   const { events } = useSelector((state: { event: EventState }) => state.event);
-  const ENDPOINT = 'http://localhost:3002';
-  const socket = socketIOClient(ENDPOINT);
+  // const ENDPOINT = 'http://localhost:3002';
+  // const socket = socketIOClient(ENDPOINT);
 
   const setPlacemarkInMap = (event: any) => {
     const clickedCoordinates = [event.get('coords')[0], event.get('coords')[1]];
@@ -57,9 +54,9 @@ export const CreateEvent = () => {
     try {
       dispatch(addEvent(newEvent));
       dispatch(getAllEvents())
-      socket.emit('create event', newEvent)
+      // socket.emit('create event', newEvent)
       setShowNotification(true)
-      
+
     } catch (error) {
       console.error(error);
     }
@@ -78,7 +75,7 @@ export const CreateEvent = () => {
     setUserCreatedEvent(user?.email)
     dispatch(getAllEvents());
   }, [dispatch, user?.email]);
-  
+
   // useEffect(() => {
   //   const handleEvent = () => {
   //     setShowNotification(true)
@@ -92,11 +89,11 @@ export const CreateEvent = () => {
   //     console.log('Stopping listening to chat message!');
   //     socket.off('create event', handleEvent);
   //   };
-    // });
+  // });
 
-    // return () => {
-    //   socket.disconnect(); // Очистка путем отключения сокета при размонтировании компонента
-    // };
+  // return () => {
+  //   socket.disconnect(); // Очистка путем отключения сокета при размонтировании компонента
+  // };
   // }, [showNotification, socket]);
 
   // useEffect(() => {
@@ -195,6 +192,7 @@ export const CreateEvent = () => {
             >
               {events && events.map((event: Event) => (
                 <Placemark
+                  key={event._id}
                   geometry={event.location.coordinates}
                   properties={{
                     balloonContent: `
@@ -231,7 +229,7 @@ export const CreateEvent = () => {
       {showNotification && (
         <div style={{ position: 'fixed', bottom: 20, right: 20, padding: 10, background: 'gray', color: 'white' }}>
           Событие успешно добавлено!
-          
+
         </div>
       )}
     </div>

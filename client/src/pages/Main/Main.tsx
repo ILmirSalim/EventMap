@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from "react";
 import { YMaps, Map, GeolocationControl, Placemark } from "@pbe/react-yandex-maps";
 import Footer from "../../components/Footer";
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import { EventState, Event } from './interfaces/Eventstate';
 import { FilterEvents } from '../../components/Filter/FilterEvents';
+import { addEvent, getAllEvents } from '../../redux/slices/eventSlice';
+import { AppDispatch, RootState } from '../../redux/store/store'
 
 const MainPage: React.FC = () => {
   const [userLocation, setUserLocation] = useState<[number, number]>([0, 0]);
@@ -14,7 +16,9 @@ const MainPage: React.FC = () => {
   const [dateFilter, setDateFilter] = useState<Date>();
   const [timeFilter, setTimeFilter] = useState<number>();
   const { events } = useSelector((state: { event: EventState }) => state.event);
+  const dispatch: AppDispatch = useDispatch<AppDispatch>()
   useEffect(() => {
+    dispatch(getAllEvents())
     navigator.geolocation.getCurrentPosition(
       (position) => {
         setUserLocation([position.coords.latitude, position.coords.longitude]);
@@ -26,10 +30,12 @@ const MainPage: React.FC = () => {
     );
     setIsLoading(false);
 
-  }, [events]);
+  }, [events, dispatch]);
   if (userLocation == null) {
     return <div>Loading...</div>;
   }
+ 
+  
   return (
     <div className="">
       <div className="flex box-border w-full">

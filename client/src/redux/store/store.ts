@@ -1,5 +1,6 @@
 import { configureStore } from '@reduxjs/toolkit';
-import eventReducer, { EventState } from '../slices/eventSlice';
+import eventReducer from '../slices/eventSlice';
+import EventState from '../slices/interface/IEventState';
 import authReducer, { AuthState } from '../slices/userSlice';
 
 export interface RootState {

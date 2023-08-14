@@ -4,12 +4,11 @@ import { useSelector, useDispatch } from "react-redux";
 import { RootState, AppDispatch } from "../../redux/store/store";
 import { Event } from "../../pages/CreateEvent/interfaces";
 import { getAllEvents } from '../../redux/slices/eventSlice';
+import averageValueRating from '../../helpers/index'
+import IEventState from "./interface/IEventState";
+import InEvent from '../../assets/inEvent.svg'
 import axios from 'axios';
-interface EventState {
-  status: 'idle' | 'loading' | 'succeeded' | 'failed';
-  event: Event | null;
-  events: Event[] | null;
-}
+
 export const EventCard = () => {
   const [inEvent, setInEvent] = useState<boolean>(false)
   const [isLoading, setIsLoading] = useState<boolean>(false)
@@ -18,31 +17,20 @@ export const EventCard = () => {
   const [resultRate, setResultRate] = useState<any>(0)
 
   const { id } = useParams<{ id: string }>();
-  const { events } = useSelector((state: { event: EventState }) => state.event);
+  const { events } = useSelector((state: { event: IEventState }) => state.event);
   const user = useSelector((state: RootState) => state.auth.user)
   const dispatch = useDispatch<AppDispatch>()
   const navigate = useNavigate()
-  
+
   const event = events?.find((event: Event) => event._id === id);
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setRating(+event.target.value);
   };
-  
+
   const handleNavigate = () => {
     navigate('/search-event');
   };
-
-  function average(array: number[]) {
-    let sum = 0;
-    if (array.length > 0) {
-      for (let i = 0; i < array!.length; i++) {
-        sum += array![i];
-      }
-      let avg = sum / array?.length;
-      return avg.toFixed(1);
-    }
-  }
 
   const addUserToEvent = async (eventId: string, userId: string | undefined) => {
     try {
@@ -54,7 +42,6 @@ export const EventCard = () => {
       dispatch(getAllEvents())
       alert('Вы успешно подтвердили участие!')
 
-      // return response.data;
     } catch (error) {
       console.log(error);
     } finally {
@@ -69,7 +56,6 @@ export const EventCard = () => {
       dispatch(getAllEvents())
       alert('Отзыв добавлен!')
 
-      // return response.data;
     } catch (error) {
       console.log(error);
     } finally {
@@ -98,7 +84,7 @@ export const EventCard = () => {
       setInEvent(false)
     }
     if (event?.rating) {
-      setResultRate(average(event!.rating))
+      setResultRate(averageValueRating(event!.rating))
     }
 
   }, [event?.users, user?._id, event])
@@ -108,8 +94,10 @@ export const EventCard = () => {
   }
 
   return (
-    <div className="p-[10px] shadow-lg shadow-white w-2/3 h-[500px] bg-gradient-to-r from-green-400 to-cyan-400 ">
-      <div className="text-white">
+    <div className="p-[10px] shadow-lg shadow-white w-2/3 h-[600px] 
+    bg-gradient-to-r from-green-400 to-cyan-400 
+    flex flex-col justify-center items-center">
+      <div className="text-white text-center mt-[-50px]">
         <h2 className="font-bold"> Название мероприятия: {event.title}</h2>
         <p>Описание события: {event.description}</p>
         <p>Местоположение: {event.locationType}</p>
@@ -120,7 +108,9 @@ export const EventCard = () => {
       {isLoading && <p>Загрузка...</p>}
       {!isLoading && !inEvent && (
         <button
-          className="p-[5px] text-xs bg-lime-600"
+          className="p-[10px] text-xs bg-gradient-to-r from-green-400 to-cyan-400 
+          hover:scale-110 transform transition-all duration-200   
+          hover:text-white rounded-xl mt-[5px]"
           onClick={() => addUserToEvent(id!, user?._id)}
         >
           Подтвердить участие в мероприятии
@@ -130,10 +120,8 @@ export const EventCard = () => {
       {isLoading && inEvent && <p>Подтверждение участия...</p>}
       {!isLoading && inEvent && <div>
         <div className="flex">
-          <svg width="30px" height="30px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path fill-rule="evenodd" clip-rule="evenodd" d="M1.5 12C1.5 6.20101 6.20101 1.5 12 1.5C17.799 1.5 22.5 6.20101 22.5 12C22.5 17.799 17.799 22.5 12 22.5C6.20101 22.5 1.5 17.799 1.5 12ZM15.7127 10.7197C16.0055 10.4268 16.0055 9.95192 15.7127 9.65903C15.4198 9.36614 14.9449 9.36614 14.652 9.65903L10.9397 13.3713L9.34869 11.7804C9.0558 11.4875 8.58092 11.4875 8.28803 11.7804C7.99514 12.0732 7.99514 12.5481 8.28803 12.841L10.4093 14.9623C10.7022 15.2552 11.1771 15.2552 11.47 14.9623L15.7127 10.7197Z" fill="green" />
-          </svg>
-          <p className="font-bold color-white">Я участвую!</p>
+          <img src={InEvent} alt="" />
+          <p className="font-bold color-white ml-[5px]">Я участвую!</p>
         </div>
 
         <button
@@ -141,17 +129,17 @@ export const EventCard = () => {
           onClick={() => removeUserFromEvent(id!, user?._id)}>
           Отменить участие в мероприятии
         </button>
-        
+
       </div>}
-      <div className="py-[13px]">
-        <div>Введите текст комментария:</div>
-        <input className="border pl-[2px] w-44 outline-none rounded-lg"
+      <div className="mt-[10px] flex flex-col items-center text-center">
+        <div className="font-bold">Введите текст комментария:</div>
+        <input className="border pl-[2px] w-44 outline-none rounded-lg w-full text-center"
           placeholder="Текст комментария..."
           type="text"
           onChange={(event) => setTextFeedback(event.target.value)} />
       </div>
 
-      <div className="p-[5px]">Оцени мероприятие:</div>
+      <div className="mt-[10px] font-bold">Поставьте оценку мероприятию:</div>
       <div className="flex">
         <div>
           <input type="radio" id="rating1" name="rating" value="1" onChange={handleChange} />
@@ -176,13 +164,17 @@ export const EventCard = () => {
       </div>
 
       <button onClick={() => addFeedback(user?.email, id!, textFeedback, rating)}
-        className="mt-[10px] cursor-pointer font-bold hover:bg-green-500 hover:text-white">
-        Добавить отзыв о событии...</button>
-
-      {event?.feedbackUser && event?.feedbackUser.map((feedback) => <div>
-        <div className="">Пользователь:{feedback.user}</div>
-        <div className="m-[10px] bg-sky-300 shadow-xl shadow-white">{feedback.feedback}</div>
-      </div>)}
+        className="p-[10px] text-xs bg-gradient-to-r from-green-400 to-cyan-400 
+        hover:scale-110 transform transition-all duration-200   
+        hover:text-white rounded-xl mt-[5px]">
+        Добавить отзыв и оценку о событии...</button>
+      <div className="font-bold mt-[20px]">Отзывы о событии:</div>
+      <div className="flex flex-wrap">
+        {event?.feedbackUser && event?.feedbackUser.map((feedback) => <div key={feedback.feedback} className="rounded-xl p-[10px] text-center" >
+          <div className="">Пользователь:{feedback.user}</div>
+          <div className="mt-[5px]">{feedback.feedback}</div>
+        </div>)}
+      </div>
       <button className="mt-[10px] cursor-pointer font-bold hover:text-white" onClick={handleNavigate}>Назад</button>
     </div>
   );
