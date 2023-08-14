@@ -4,7 +4,6 @@ import { register, hasUser, logout, deleteUser } from '../../redux/slices/userSl
 import { RootState, AppDispatch } from '../../redux/store/store'
 import SetAvatar from '../SetAvatar/index'
 import { NavLink, useNavigate } from "react-router-dom";
-// import axios from 'axios';
 
 const RegistrationUser: React.FC = () => {
   const [email, setEmail] = useState('');
@@ -13,6 +12,7 @@ const RegistrationUser: React.FC = () => {
   const [userAge, setUserAge] = useState('');
   const [interestsAndPreferences, setinterestsAndPreferences] = useState('');
   const [avatarPath, setAvatar] = useState('');
+  const [disabled, setDisabled] = useState<boolean>(true);
 
   const dispatch = useDispatch<AppDispatch>()
   const isAuthenticated = useSelector((state: RootState) => state.auth.isAuthenticated);
@@ -31,15 +31,6 @@ const RegistrationUser: React.FC = () => {
       })).unwrap();
       alert("Регистрация прошла успешно");
 
-      // const formData:any = new FormData();
-      // formData.append('email', email);
-      // formData.append('password', password);
-      // formData.append('userName', userName);
-      // formData.append('userAge', userAge);
-      // formData.append('interestsAndPreferences', interestsAndPreferences);
-      // if (avatar) {
-      //   formData.append('avatar', avatar);
-      // }
     } catch (error) {
       console.log('Registration error:', error);
     }
@@ -50,7 +41,7 @@ const RegistrationUser: React.FC = () => {
     navigate('/')
   };
 
-  const removeUser = async (email:any) => {
+  const removeUser = async (email: any) => {
     try {
       await dispatch(deleteUser(email))
       alert('Ваша учетная запись удалена!')
@@ -63,13 +54,21 @@ const RegistrationUser: React.FC = () => {
 
   useEffect(() => {
     const user = localStorage.getItem('token')
-
+    if (email && password && userName && userAge && interestsAndPreferences) {
+      setDisabled(false)
+    } else {
+      setDisabled(true)
+    }
     if (user) {
       dispatch(hasUser())
     }
-  }, [dispatch])
+  }, [dispatch, email, password, userName, userAge, interestsAndPreferences])
+
+
+
   return (
     <div className='flex flex-col justify-center h-screen'>
+
       {isAuthenticated ? (
         <div className='bg-gradient-to-r from-teal-200 to-lime-200  
         w-96 h-96  shadow-lg shadow-white flex flex-col items-center 
@@ -83,13 +82,12 @@ const RegistrationUser: React.FC = () => {
               className='cursor-pointer hover:text-white hover:font-bold 
               bg-gradient-to-r from-green-400 to-cyan-400 mt-[20px] rounded-xl p-[5px]'
               onClick={handleLogout}>Выйти из профиля</button>
-            <button onClick={()=>removeUser(user?.email)} className='cursor-pointer hover:text-white bg-gradient-to-r from-green-400 to-cyan-400
+            <button onClick={() => removeUser(user?.email)} className='cursor-pointer hover:text-white bg-gradient-to-r from-green-400 to-cyan-400
               hover:font-bold ml-[10px] mt-[20px] p-[5px] rounded-xl' >
               Удалить профиль</button>
           </div>
         </div>
       ) : (
-        
         <div className='flex flex-col justify-center mt-[-200px]'>
           <div className='font-bold mb-[10px]'>Заполните данные для регистрации:</div>
           <form onSubmit={handleRegister} encType='multipart/form-data' className='flex flex-col'>
@@ -100,7 +98,7 @@ const RegistrationUser: React.FC = () => {
               placeholder="Введите email"
               className=' p-[5px] rounded-xl '
             />
-            <br/>
+            <br />
             <input
               type="password"
               value={password}
@@ -108,7 +106,7 @@ const RegistrationUser: React.FC = () => {
               placeholder="Введите пароль"
               className=' p-[5px] rounded-xl'
             />
-             <br/>
+            <br />
             <input
               type="username"
               value={userName}
@@ -116,7 +114,7 @@ const RegistrationUser: React.FC = () => {
               placeholder="Введите имя"
               className=' p-[5px] rounded-xl'
             />
-             <br/>
+            <br />
             <input
               type="userAge"
               value={userAge}
@@ -124,7 +122,7 @@ const RegistrationUser: React.FC = () => {
               placeholder="Введите возраст"
               className=' p-[5px] rounded-xl'
             />
-             <br/>
+            <br />
             <input
               type="interestsAndPreferences"
               value={interestsAndPreferences}
@@ -132,15 +130,17 @@ const RegistrationUser: React.FC = () => {
               placeholder="Ваши интересы"
               className='mb-[10px] p-[5px] rounded-xl'
             />
-            <button className='cursor-pointer bg-gradient-to-r from-green-400 to-cyan-400 mb-[10px] p-[5px] 
-            hover:scale-110 transform transition-all duration-200  rounded-xl' type="submit">Зарегистрироваться</button>
+            <button disabled={disabled} className='disabled:opacity-50 disabled:hover:scale-100 
+            cursor-pointer bg-gradient-to-r from-green-400 to-cyan-400 mb-[10px] p-[5px] 
+            hover:scale-110 transform transition-all duration-200  rounded-xl' 
+            type="submit">Зарегистрироваться</button>
           </form>
         </div>
       )}
       {!isAuthenticated && <NavLink className="p-[5px] bg-gradient-to-r from-green-400 to-cyan-400 
        hover:scale-110 transform transition-all duration-200 
        cursor-pointer text-center rounded-xl" to="/authorization">У меня есть учетная запись</NavLink>}
-      
+
     </div>
   );
 };

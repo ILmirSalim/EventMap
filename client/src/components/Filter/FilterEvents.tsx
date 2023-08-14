@@ -20,10 +20,10 @@ export const FilterEvents: FC<IFilterProps> = ({ setDistanceFilter, setTypesFilt
 
   return (
     <div className="block mt-[20px] flex justify-center">
-      <input className=' rounded-xl p-[5px] m-[5px] outline-none' type='number' placeholder='Distance' onChange={handleDistanceChange}></input>
-      <input className='rounded-xl p-[5px] m-[5px] outline-none' type='text' placeholder='Type' onChange={handleTypesChange}></input>
-      <input className='rounded-xl p-[5px] m-[5px] outline-none' type='date' placeholder='Date' onChange={handleDateChange}></input>
-      <input className='rounded-xl p-[5px] m-[5px] outline-none hover:shadow-white' type='number' placeholder='Time' onChange={handleTimeChange}></input>
+      <input className=' rounded-xl p-[5px] m-[5px] outline-none text-center' type='number' placeholder='Введите дистанцию' onChange={handleDistanceChange}></input>
+      <input className='rounded-xl p-[5px] m-[5px] outline-none text-center' type='text' placeholder='Тип события' onChange={handleTypesChange}></input>
+      <input className='rounded-xl p-[5px] m-[5px] outline-none text-center' type='date' placeholder='Дата события' onChange={handleDateChange}></input>
+      <input className='rounded-xl p-[5px] m-[5px] outline-none hover:shadow-white text-center' type='number' placeholder='Время события' onChange={handleTimeChange}></input>
     </div>
   );
 };

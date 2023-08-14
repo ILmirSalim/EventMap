@@ -1,10 +1,5 @@
 export default function averageRating(array: number[]) {
-    let sum = 0;
-    if (array.length > 0) {
-      for (let i = 0; i < array!.length; i++) {
-        sum += array![i];
-      }
-      let avg = sum / array?.length;
-      return avg.toFixed(1);
-    }
-  }
+  if (array.length === 0) return null;
+  const avg = array.reduce((acc, current) => acc + current, 0) / array.length;
+  return avg.toFixed(1);
+};

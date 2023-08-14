@@ -5,14 +5,10 @@ import { login } from '../../redux/slices/userSlice';
 import { RootState, AppDispatch } from '../../redux/store/store'
 import UserCredentials from './interface/userCredentails'
 import { useNavigate } from 'react-router-dom';
+import socketIOClient from 'socket.io-client';
 
-interface User {
-  email: string;
-  password: string;
-  userName: string;
-  userAge: string;
-  interestsAndPreferences: string[];
-}
+const ENDPOINT = 'http://localhost:3002';
+const socket = socketIOClient(ENDPOINT);
 
 const AuthComponent: React.FC = () => {
   const [isHidden, setIsHidden] = useState<boolean>(true)
