@@ -22,6 +22,35 @@ export const getAllEvents = createAsyncThunk(
   }
 )
 
+export const deleteEvent = createAsyncThunk(
+  'event/delete',
+  async (eventId:string) => {
+    console.log('slice', eventId);
+    
+    return await eventAPI.deleteEvent(eventId)
+  }
+)
+
+export const searchEvents = createAsyncThunk(
+  'event/search',
+  async (
+    { title, category, startDate, endDate, longitude, latitude, distance }: {
+
+      title: string,
+      category: string,
+      startDate: Date | null,
+      endDate: Date | null,
+      longitude: number,
+      latitude: number,
+      distance: number
+
+    }
+  ) => {
+    
+    return await eventAPI.searchEvents(title, category, startDate, endDate, longitude, latitude, distance);
+  }
+);
+
 export const eventSlice = createSlice({
   name: 'event',
   initialState,
@@ -43,6 +72,22 @@ export const eventSlice = createSlice({
       .addCase(getAllEvents.fulfilled, (state, action) => {
         state.status = 'succeeded';
         state.events = action.payload || null;
+      })
+      .addCase(searchEvents.pending, (state) => {
+        state.status = 'loading';
+        state.events = null;
+      })
+      .addCase(searchEvents.fulfilled, (state, action) => {
+        state.status = 'succeeded';
+        state.events = action.payload;
+      })
+      .addCase(deleteEvent.pending, (state) => {
+        state.status = 'loading';
+        state.event = null;
+      })
+      .addCase(deleteEvent.fulfilled, (state, action) => {
+        state.status = 'succeeded';
+        state.event = action.payload;
       })
   },
 });

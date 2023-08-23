@@ -3,7 +3,8 @@ import { useNavigate, useParams, } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import { RootState, AppDispatch } from "../../redux/store/store";
 import { Event } from "../../pages/CreateEvent/interfaces";
-import { getAllEvents } from '../../redux/slices/eventSlice';
+import { getAllEvents, deleteEvent } from '../../redux/slices/eventSlice';
+import { addUserInEvent } from '../../redux/slices/userSlice'
 import averageValueRating from '../../helpers/index'
 import IEventState from "./interface/IEventState";
 import InEvent from '../../assets/inEvent.svg'
@@ -31,17 +32,21 @@ export const EventCard = () => {
   const handleNavigate = () => {
     navigate('/search-event');
   };
+  const removeEvent = () => {
+    dispatch(deleteEvent(id!))
+    navigate('/')
+  }
 
+  
   const addUserToEvent = async (eventId: string, userId: string | undefined) => {
     try {
       setIsLoading(true);
       if (event?.users.includes(userId as never)) {
         alert('Вы уже подтвердили участие!')
       }
-      await axios.post('http://localhost:3002/api/addUserToEvent', { eventId, userId })
+      await dispatch(addUserInEvent({eventId, userId}))
       dispatch(getAllEvents())
       alert('Вы успешно подтвердили участие!')
-
     } catch (error) {
       console.log(error);
     } finally {
@@ -110,7 +115,7 @@ export const EventCard = () => {
         <button
           className="p-[10px] text-xs bg-gradient-to-r from-green-400 to-cyan-400 
           hover:scale-110 transform transition-all duration-200   
-          hover:text-white rounded-xl mt-[5px]"
+          hover:text-white rounded-xl mt-[5px] border-white border"
           onClick={() => addUserToEvent(id!, user?._id)}
         >
           Подтвердить участие в мероприятии
@@ -125,7 +130,7 @@ export const EventCard = () => {
         </div>
 
         <button
-          className="p-[5px] text-xs bg-red-600 hover:bg-red-300 hover:font-bold"
+          className="p-[5px] text-xs bg-red-600 hover:bg-red-300 hover:font-bold border-white border"
           onClick={() => removeUserFromEvent(id!, user?._id)}>
           Отменить участие в мероприятии
         </button>
@@ -166,7 +171,7 @@ export const EventCard = () => {
       <button onClick={() => addFeedback(user?.email, id!, textFeedback, rating)}
         className="p-[10px] text-xs bg-gradient-to-r from-green-400 to-cyan-400 
         hover:scale-110 transform transition-all duration-200   
-        hover:text-white rounded-xl mt-[5px]">
+        hover:text-white rounded-xl mt-[5px] border-white border">
         Добавить отзыв и оценку о событии...</button>
       <div className="font-bold mt-[20px]">Отзывы о событии:</div>
       <div className="flex flex-wrap">
@@ -174,8 +179,10 @@ export const EventCard = () => {
           <div className="">Пользователь:{feedback.user}</div>
           <div className="mt-[5px]">{feedback.feedback}</div>
         </div>)}
+        {event?.feedbackUser?.length===0 && <>Еще нет комментариев...</>}
       </div>
-      <button className="mt-[10px] cursor-pointer font-bold hover:text-white" onClick={handleNavigate}>Назад</button>
+      <button className="border-white border p-[10px] rounded-xl mt-[50px] cursor-pointer font-bold hover:text-white" onClick={handleNavigate}>Назад</button>
+      <button className="border-white border p-[10px] rounded-xl mt-[10px] cursor-pointer font-bold hover:text-white hover:bg-red-600" onClick={removeEvent}>Удалить событие</button>
     </div>
   );
 };

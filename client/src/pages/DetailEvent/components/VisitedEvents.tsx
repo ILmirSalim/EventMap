@@ -26,11 +26,11 @@ const VisitedEvents: React.FC = () => {
     }, [user?._id])
 
     return (
-        <div className='shadow-xl shadow-white w-[1200px] h-full flex justify-center'>
+        <div className='shadow-xl shadow-white w-[1200px] h-full flex justify-center '>
             {events.length === 0 && <div>Нет событий в которых участвует пользователь</div>}
-            <div className='flex'>
+            <div className='flex flex-wrap'>
                 {events && events.map((event) => <div key={event._id} className='flex flex-col 
-                justify-center text-center items-center h-48 w-48 
+                justify-center text-center items-center h-48 w-48 ml-[10px]
                 bg-gradient-to-r from-green-400 to-cyan-400 rounded-xl 
                 hover:scale-110 transform transition-all duration-200 shadow-xl shadow-white'>
                     <div className='p-[5px]'>Название события:{event.title}</div>

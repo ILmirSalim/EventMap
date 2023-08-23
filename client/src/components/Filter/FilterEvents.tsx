@@ -1,7 +1,7 @@
 import React, { FC, ChangeEvent } from 'react';
 import IFilterProps from './interface/IFilterProps';
 
-export const FilterEvents: FC<IFilterProps> = ({ setDistanceFilter, setTypesFilter, setDateFilter, setTimeFilter }) => {
+const FilterEvents: FC<IFilterProps> = ({ setDistanceFilter, setTypesFilter, setDateFilter, setTimeFilter }) => {
   const handleDistanceChange = (e: ChangeEvent<HTMLInputElement>) => {
     setDistanceFilter(e.target.valueAsNumber);
   };
@@ -27,3 +27,5 @@ export const FilterEvents: FC<IFilterProps> = ({ setDistanceFilter, setTypesFilt
     </div>
   );
 };
+
+export default React.memo(FilterEvents)

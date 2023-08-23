@@ -22,10 +22,7 @@ export const CreateEvent = () => {
 
   const user = useSelector((state: RootState) => state.auth.user)
   const dispatch: AppDispatch = useDispatch<AppDispatch>()
-  const { events } = useSelector((state: { event: EventState }) => state.event);
-  // const ENDPOINT = 'http://localhost:3002';
-  // const socket = socketIOClient(ENDPOINT);
-
+  
   const setPlacemarkInMap = (event: any) => {
     const clickedCoordinates = [event.get('coords')[0], event.get('coords')[1]];
     setCoordinates(clickedCoordinates);
@@ -34,7 +31,9 @@ export const CreateEvent = () => {
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const point = "Point"
+    
     const newEvent = {
+      
       title: title,
       description: description,
       locationType: locationType,
@@ -48,12 +47,11 @@ export const CreateEvent = () => {
       day: day,
       time: time,
       category: category,
-      userCreatedEvent: userCreatedEvent
+      userCreatedEvent: userCreatedEvent || '' 
     };
 
     try {
       dispatch(addEvent(newEvent));
-      dispatch(getAllEvents())
       // socket.emit('create event', newEvent)
       setShowNotification(true)
 
@@ -73,40 +71,8 @@ export const CreateEvent = () => {
     );
 
     setUserCreatedEvent(user?.email)
-    dispatch(getAllEvents());
-  }, [dispatch, user?.email]);
 
-  // useEffect(() => {
-  //   const handleEvent = () => {
-  //     setShowNotification(true)
-  //   };
-
-  //   socket.on('create event', handleEvent);
-
-  //   console.log('Listening to chat message!');
-
-  //   return () => {
-  //     console.log('Stopping listening to chat message!');
-  //     socket.off('create event', handleEvent);
-  //   };
-  // });
-
-  // return () => {
-  //   socket.disconnect(); // Очистка путем отключения сокета при размонтировании компонента
-  // };
-  // }, [showNotification, socket]);
-
-  // useEffect(() => {
-  //   if (showNotification) {
-  //     const timeout = setTimeout(() => {
-  //       setShowNotification(false);
-  //     }, 10000);
-
-  //     return () => {
-  //       clearTimeout(timeout);
-  //     };
-  //   }
-  // }, [showNotification]);
+  }, [user?.email]);
 
   return (
     <div className='flex justify-center items-center  shadow-xl shadow-white w-[1200px]'>
@@ -190,37 +156,25 @@ export const CreateEvent = () => {
               onClick={setPlacemarkInMap}
               style={{ width: "500px", height: "500px" }}
             >
-              {events && events.map((event: Event) => (
-                <Placemark
-                  key={event._id}
-                  geometry={event.location.coordinates}
-                  properties={{
-                    balloonContent: `
-                  <h2>Название:${event.title}</h2>
-                  <p>Описание:${event.description}</p>
-                  <p>Адрес события:${event.address}</p>
-                  <p>День:${event.day}</p>
-                  <p>Время:${event.time}</p>
-                `,
-                  }}
-                  options={{
-                    iconColor: "green",
-                    hideIconOnBalloonOpen: false,
-                    balloonOffset: [3, -40],
-                  }}
-                  modules={['geoObject.addon.balloon']}
-                  onClick={(e: any) => {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    e.get('target').balloon.open();
-                  }}
-                />
-              ))}
-
               {placemarkCoordinates && (
                 <Placemark geometry={placemarkCoordinates} />
               )}
-              {userLocation && <Placemark geometry={userLocation} options={{ preset: 'islands#blueCircleDotIcon' }} />}
+              {userLocation && <Placemark
+                geometry={userLocation}
+                options={{
+                  preset: 'islands#blueCircleDotIcon',
+                  hideIconOnBalloonOpen: false,
+                  balloonOffset: [-1, -11],
+                }}
+                modules={['geoObject.addon.balloon']}
+                onClick={(e: any) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  e.get('target').balloon.open();
+                }}
+                properties={{
+                  balloonContent: `<h2>Мое местоположение</h2>`,
+                }} />}
               <GeolocationControl options={{ float: "left" }} />
             </Map>
           </YMaps>
@@ -229,7 +183,6 @@ export const CreateEvent = () => {
       {showNotification && (
         <div style={{ position: 'fixed', bottom: 20, right: 20, padding: 10, background: 'gray', color: 'white' }}>
           Событие успешно добавлено!
-
         </div>
       )}
     </div>

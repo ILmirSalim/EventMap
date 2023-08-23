@@ -46,9 +46,7 @@ class UserService {
     }
 
     async deleteUser(email) {
-        const user = await UserModel.findOneAndDelete({ email });
-        console.log('emai -', email);
-       
+        await UserModel.findOneAndDelete({ email });
         return console.log('Пользователь удален!');;
     }
 

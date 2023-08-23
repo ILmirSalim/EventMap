@@ -19,18 +19,26 @@ interface AuthResponse {
   user: UserProfile;
 }
 
+
+export interface IMessage {
+  text: string, 
+  name: string, 
+  id: string
+}
+
 export interface AuthState {
   isAuthenticated: boolean;
   token: string | null;
   user: UserProfile | null;
   error: string | null;
+  messages: IMessage[]
 }
-
 const initialState: AuthState = {
   isAuthenticated: false,
   token: null,
   user: null,
   error: null,
+  messages: []
 };
 
 // функция для отправки запроса на сервер для авторизации
@@ -67,7 +75,19 @@ export const deleteUser = createAsyncThunk<AuthResponse, UserProfile>(
     }
   }
 );
-
+export const addUserInEvent = createAsyncThunk<void, { eventId: string, userId: string | undefined }>(
+  'auth/addUserToEvent',
+  async ({ eventId, userId }) => {
+    try {
+      console.log('userId', userId);
+      
+      await axios.post('http://localhost:3002/api/addUserToEvent', { eventId, userId });
+      
+    } catch (error) {
+      console.log(error);
+    }
+  }
+);
 export const register = createAsyncThunk<AuthResponse, {
   email: string;
   password: string;
@@ -116,6 +136,9 @@ export const authSlice = createSlice({
     },
     hasUser: (state) => {
       state.isAuthenticated = true;
+    },
+    addMessage: (state, action: PayloadAction<IMessage>) => {
+      state.messages.push(action.payload);
     }
   },
   extraReducers: (builder) => {
@@ -156,19 +179,19 @@ export const authSlice = createSlice({
       })
       .addCase(deleteUser.pending, (state, action) => {
         state.isAuthenticated = true;
-        
+
         state.error = null;
       })
       .addCase(deleteUser.fulfilled.type, (state, action) => {
         state.isAuthenticated = false;
         state.token = null
         state.user = null
-        
+
       })
-      
+
   },
 });
 
-export const { logout, hasUser } = authSlice.actions;
+export const { logout, hasUser, addMessage } = authSlice.actions;
 
 export default authSlice.reducer;

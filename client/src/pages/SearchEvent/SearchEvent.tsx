@@ -1,7 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
 import { Link } from "react-router-dom";
 import Event from './interface/ievent'
+import { AppDispatch } from '../../redux/store/store'
+import { useDispatch } from 'react-redux';
+import { searchEvents } from '../../redux/slices/eventSlice';
 
 export const SearchEvent: React.FC = () => {
   const [category, setCategory] = useState('');
@@ -12,58 +15,39 @@ export const SearchEvent: React.FC = () => {
   const [distance, setDistance] = useState<number>(0)
   const [userLocation, setUserLocation] = useState<[number, number]>([0, 0])
 
+  const dispatch: AppDispatch = useDispatch<AppDispatch>()
   const handleCategoryChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setCategory(event.target.value);
   };
 
-  const handleSearchDistance = async (
+  const handleSearchClick = useCallback(async (
+    title: string,
+    category: string,
+    startDate: Date | null,
+    endDate: Date | null,
     longitude: number,
     latitude: number,
     distance: number
   ) => {
     try {
-      const response = await axios.post<Event[]>(
-        'http://localhost:3002/api/filterDistance',
-        {
-          longitude,
-          latitude,
-          distance
-        }
-      );
-
-      setEvents(response.data);
-    } catch (error) {
-      console.log(error);
-    }
-  };
-  const handleSearchClick = async (
-    title: string,
-    category: string,
-    startDate: Date | null,
-    endDate: Date | null,
-    // longitude: number,
-    // latitude: number,
-    // distance: number
-  ) => {
-    try {
-      const response = await axios.post<Event[]>(
-        'http://localhost:3002/api/search',
-        {
-          title: title,
-          category: category,
-          startDate: startDate,
-          endDate: endDate,
-          // longitude: longitude,
-          // latitude: latitude,
-          // distance: distance
-        }
-      );
+      const searchEvent = {
+        title: title,
+        category: category,
+        startDate: startDate,
+        endDate: endDate,
+        longitude: longitude,
+        latitude: latitude,
+        distance: distance
+      };
       
-      setEvents(response.data);
+      const events = await dispatch(searchEvents(searchEvent));
+      
+      setEvents(events.payload as never);
     } catch (error) {
       console.log(error);
     }
-  };
+  }, [dispatch]);
+
   useEffect(() => {
     navigator.geolocation.getCurrentPosition(
       (position) => {
@@ -106,7 +90,7 @@ export const SearchEvent: React.FC = () => {
             onChange={(e) => setLastDate(new Date(e.target.value))}
           />
           <br />
-          <label className='mr-[10px] ml-[10px]'>Ввести дистанцию:</label>
+          <label className='mr-[10px] ml-[10px]'>Ввести дистанцию(метр):</label>
           <input
             className='rounded-xl p-[5px] mt-[10px]'
             value={distance}
@@ -115,21 +99,17 @@ export const SearchEvent: React.FC = () => {
           <button className=' p-[5px] rounded-lg 
             bg-gradient-to-r from-green-400 
             to-cyan-400 mt-[10px] w-full hover:scale-110 transform transition-all duration-200 '
-            onClick={() => handleSearchClick(title, category, date, lastDate)}>
+            onClick={() => handleSearchClick(title, category, date, lastDate, userLocation[0], userLocation[1], distance)}>
             Искать
-          </button>
-          <button className='p-[5px] mt-[10px] rounded-lg bg-gradient-to-r 
-            from-green-400 to-cyan-400'
-            onClick={() => { handleSearchDistance(userLocation[0], userLocation[1], distance) }}>
-            Искать по дистанции
           </button>
         </div>
         <div className='flex flex-col ml-[20px]'>
           <h1 className='font-bold  pt-[10px]'>Список событий:</h1>
           <div className='flex  flex-wrap'>
-            {events && events.map((event) =>
+            {Array.isArray(events) && events.map((event) =>
               <div className='p-[10px] m-[10px] w-48 bg-gradient-to-r from-green-400 to-cyan-400 
-              rounded-lg hover:scale-110 transform transition-all duration-200 ' key={event._id}>
+              rounded-lg hover:scale-110 transform transition-all duration-200 flex flex-col 
+              text-center items-center' key={event._id}>
                 <div className='italic'><p className='font-bold'>Название:</p> {event.title}</div>
                 <div className='italic'><p className='font-bold'>Категория:</p>{event.category}</div>
                 <div className='italic'><p className='font-bold'>Описание:</p> {event.description}</div>

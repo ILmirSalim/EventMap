@@ -1,4 +1,6 @@
 export default interface Event {
+    userCreatedEvent: string
+    
     title: string,
     description: string,
     locationType: string,
@@ -7,6 +9,6 @@ export default interface Event {
     time: string,
     category: string,
     location: {
-        coordinates: [number, number],
+      coordinates: [number, number],
     }
-}
+  }

@@ -7,20 +7,46 @@ import chatImage from '../../assets/image.svg'
 import EventState from "./interfaces/iEventState";
 import socketIOClient from 'socket.io-client';
 import Logo from '../../assets/logo.svg'
+import { addMessage } from "../../redux/slices/userSlice";
+import { useDispatch } from "react-redux";
+import { AppDispatch } from '../../redux/store/store'
 
+const ENDPOINT = 'http://localhost:3002';
+const socket = socketIOClient(ENDPOINT);
 export const Root = () => {
   const user = useSelector((state: RootState) => state.auth.user)
   const isAuthenticated = useSelector((state: RootState) => state.auth.isAuthenticated);
   const { events } = useSelector((state: { event: EventState }) => state.event);
   const [isChatOpen, setIsChatOpen] = React.useState<boolean>(false);
   const [showNotification, setShowNotification] = useState(false);
-
-  const ENDPOINT = 'http://localhost:3002';
-  const socket = socketIOClient(ENDPOINT);
+  // const [messages, setMessages] = useState<{ name: string, id: string, text: string }[]>([]);
+  const dispatch: AppDispatch = useDispatch<AppDispatch>()
+  const messages = useSelector((state: RootState) => state.auth.messages);
+  const lastMessage = useSelector((state: RootState) => state.auth.messages[state.auth.messages.length - 1]);
 
   const handleToggleChat = () => {
     setIsChatOpen(!isChatOpen);
   }
+
+  useEffect(() => {
+    
+    const handleMessage = (data: any) => {
+      dispatch(addMessage(data))
+    };
+    socket.on('responce', handleMessage);
+    socket.on('responce', () => {
+      setShowNotification(true);
+
+      setTimeout(() => {
+        setShowNotification(false);
+      }, 5000);
+    });
+    return () => {
+      console.log('Stopping listening to chat message!');
+      // socket.off('responce', handleMessage);
+      socket.disconnect()
+    };
+  }, [dispatch]);
   // useEffect(() => {
   //   socket.on('responce', () => {
   //     setShowNotification(true);
@@ -36,6 +62,7 @@ export const Root = () => {
   //     console.log('new event!!');
 
   //   };
+  console.log(messages);
 
   return (<div className="pl-[50px] bg-gradient-to-r from-teal-200 to-lime-200 pr-[50px] ">
     <div className="flex shadow-2xl shadow-white items-center">
@@ -73,9 +100,14 @@ export const Root = () => {
         </div>}
       </div>}
       {showNotification && (
-        <div style={{ position: 'fixed', bottom: 20, left: 20, padding: 10, background: 'green', color: 'white' }}>
+        lastMessage.name === user?.userName ? ( null ) : (<div className="fixed bottom-10 left-20 p-[10px] bg-green-500 text-white flex flex-col rounded-xl">
+        <div>
           Новое сообщение!
         </div>
+        <div>
+          От пользователя: {lastMessage.name}
+        </div>
+      </div>)
       )}
     </div>
   </div>)

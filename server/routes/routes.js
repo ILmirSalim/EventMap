@@ -34,14 +34,13 @@ routes.delete('/deleteUser', userController.deleteUser)
 // routes.post('/api/upload', upload.single('avatar'), userController.setAvatar)
 
 routes.post('/newevent', eventController.addEvent)
+routes.delete('/deleteEvent', eventController.deleteEvents)
 routes.get('/events', eventController.getAllEvents)
 routes.post('/addUserEvent', eventController.addUserToEvent)
-routes.post('/search', eventController.searchEventsByCategory);
-routes.post('/filterevents', eventController.filterEvents)
+routes.post('/search', eventController.searchEvents);
 routes.post('/addUserToEvent', eventController.addUserToEvent)
 routes.post('/addFeedbackToEvent', eventController.addFeedbackToEvent)
 routes.post('/removeUserFromEvent', eventController.removeUserFromEvent)
 routes.post('/getEventsByUserId', eventController.getEventsByUserId)
-routes.post('/filterDistance', eventController.filterEvents)
 
 module.exports = routes

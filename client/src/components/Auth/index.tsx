@@ -5,14 +5,11 @@ import { login } from '../../redux/slices/userSlice';
 import { RootState, AppDispatch } from '../../redux/store/store'
 import UserCredentials from './interface/userCredentails'
 import { useNavigate } from 'react-router-dom';
-import socketIOClient from 'socket.io-client';
-
-const ENDPOINT = 'http://localhost:3002';
-const socket = socketIOClient(ENDPOINT);
 
 const AuthComponent: React.FC = () => {
   const [isHidden, setIsHidden] = useState<boolean>(true)
   const [email, setEmail] = useState<string>('')
+  const [disabled, setDisabled] = useState<boolean>(true);
   const [userCredentials, setUserCredentials] = useState<UserCredentials>({
     userName: '',
     userAge: '',
@@ -46,13 +43,17 @@ const AuthComponent: React.FC = () => {
     const { name, value } = event.target;
     setUserCredentials((prevState) => ({ ...prevState, [name]: value }));
   };
-
   useEffect(() => {
-    const user = localStorage.getItem('token')
-    if (user) {
-      // setIsAuthenticated(true)
+    
+    if (userCredentials.email && userCredentials.password ) {
+      setDisabled(false)
+    } else {
+      setDisabled(true)
     }
-  }, [])
+   
+    
+  }, [ userCredentials.password, userCredentials.email])
+
   return (
     <>
       {isAuthenticated ? null : (
@@ -80,8 +81,10 @@ const AuthComponent: React.FC = () => {
                 placeholder='Введите пароль'
               />
             </label>
-            <button type="submit" className='p-[5px] hover:scale-110 transform transition-all duration-200
-             bg-gradient-to-r from-green-400 to-cyan-400 rounded-xl'>Авторизация</button>
+            <button disabled={disabled} type="submit" className='p-[5px] hover:scale-110 
+            transform transition-all duration-200
+             bg-gradient-to-r from-green-400 to-cyan-400 
+             rounded-xl disabled:opacity-50 disabled:hover:scale-100'>Авторизация</button>
           </form>
           {isHidden && <button className='mt-[5px]' onClick={toggleHidden}>Не помню пароль...</button>}
           {!isHidden &&

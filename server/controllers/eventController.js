@@ -78,6 +78,20 @@ class EventsController {
     }
   }
 
+  async deleteEvents(req, res) {
+    try {
+      const {eventId} = req.body;
+      console.log('number', eventId);
+      await EventModel.findByIdAndDelete(eventId);
+
+      res.status(200).json({ message: 'Event delete!' });
+
+    } catch (e) {
+      console.log('This is error', e.message);
+      res.status(400).json({ message: e.message });
+    }
+  }
+
   async getEventsByUserId(req, res) {
     try {
       const userId = req.body.userId;
@@ -92,165 +106,50 @@ class EventsController {
     }
   }
 
-  async searchEventsByCategory(req, res) {
+  async searchEvents(req, res) {
     const title = req.body.title;
     const category = req.body.category;
     const startDate = req.body.startDate;
     const endDate = req.body.endDate;
-    console.log(startDate, endDate);
-    try {
-      let searchEvent = {};
+    const { longitude, latitude, distance } = req.body;
 
-      if (title && category && startDate && endDate) {
-        searchEvent = {
-          title: title,
-          category: category,
-          date: { $gte: startDate, $lte: endDate },
-        };
-      } else if (title && category && startDate) {
-        searchEvent = {
-          title: title,
-          category: category,
-          date: { $gte: startDate },
-        };
-      } else if (title && category && endDate) {
-        searchEvent = {
-          title: title,
-          category: category,
-          date: { $lte: endDate },
-        };
-      } else if (title && startDate) {
-        searchEvent = {
-          title: title,
-          date: { $gte: startDate },
-        };
-      } else if (title && endDate) {
-        searchEvent = {
-          title: title,
-          date: { $lte: endDate },
-        };
-      } else if (category && startDate) {
-        searchEvent = {
-          category: category,
-          date: { $gte: startDate },
-        };
-      } else if (category && endDate) {
-        searchEvent = {
-          category: category,
-          date: { $lte: endDate },
-        };
-      } else if (category) {
-        searchEvent = {
-          category: category,
-        }
-      } else if (startDate && endDate) {
-        searchEvent = {
-          date: { $gte: startDate, $lte: endDate },
-        };
-      } else if (startDate) {
-        searchEvent = {
-          date: { $gte: startDate }
-        }
-      } else if (endDate) {
-        searchEvent = {
-          date: { $lte: endDate }
-        }
-      } else if (title) {
-        searchEvent = {
-          title: title,
-        };
-      } else if (title, category) {
-        searchEvent = {
-          title: title,
-          category: category,
-        };
+    try {
+      const searchEvent = {};
+
+      if (title) {
+        searchEvent.title = title;
       }
-      console.log('searchEvent in category', searchEvent);
-      const events = await EventModel.find(searchEvent);
-      res.json(events);
-    } catch (err) {
-      res.json({ message: err });
-    }
-  }
-  // async searchEvents(req, res) {
-  //   const title = req.body.title;
-  //   const category = req.body.category;
-  //   const startDate = req.body.startDate;
-  //   const endDate = req.body.endDate;
-  //   const { longitude, latitude, distance } = req.body;
-  
-  //   try {
-  //     const searchEvent = {};
-  
-  //     if (title) {
-  //       searchEvent.title = title;
-  //     }
-  
-  //     if (category) {
-  //       searchEvent.category = category;
-  //     }
-  
-  //     if (startDate) {
-  //       searchEvent.date = { $gte: startDate };
-  //     }
-  
-  //     if (endDate) {
-  //       searchEvent.date = { ...searchEvent.date, $lte: endDate };
-  //     }
-  
-  //     let events = [];
-  
-  //     if (longitude && latitude && distance) {
-  //       events = await EventModel.aggregate([
-  //         {
-  //           $geoNear: {
-  //             near: {
-  //               type: "Point",
-  //               coordinates: [longitude, latitude],
-  //             },
-  //             distanceField: "distance",
-  //             maxDistance: distance,
-  //             spherical: true,
-  //           },
-  //         },
-  //         { $match: searchEvent },
-  //       ]);
-  //     } else {
-  //       events = await EventModel.find(searchEvent);
-  //     }
-  
-  //     res.json(events);
-  //     console.log('searchEvent', searchEvent);
-  //     console.log('events', events);
-  //   } catch (err) {
-  //     res.json({ message: err });
-  //   }
-  // }
-  
 
-  async filterEvents(req, res) {
-    try {
-      const { longitude, latitude, distance } = req.body;
-    
-      const events = await EventModel.aggregate([
-        {
-          $geoNear: {
-            near: {
+      if (category) {
+        searchEvent.category = category;
+      }
+
+      if (startDate) {
+        searchEvent.day = { $gte: startDate };
+      }
+
+      if (endDate) {
+        searchEvent.day = { ...searchEvent.day, $lte: endDate };
+      }
+
+      if (longitude && latitude && distance) {
+        
+        searchEvent.location = {
+          $nearSphere: {
+            $geometry: {
               type: "Point",
               coordinates: [longitude, latitude]
             },
-            distanceField: "distance",
-            maxDistance: distance,
-            spherical: true
+            $maxDistance: distance
           }
-        }
-      ]);
-    
-      res.status(200).json(events);
-    
-    } catch (e) {
-      console.log('this is error', e.message);
-      res.status(400).json({ message: e.message });
+        };
+      }
+      
+      let events = await EventModel.find(searchEvent);
+      res.json(events);
+     
+    } catch (err) {
+      res.json({ message: err });
     }
   }
 
@@ -270,7 +169,7 @@ class EventsController {
         category: req.body.category,
         userCreatedEvent: req.body.userCreatedEvent
       })
-      
+
       await eventModel.save()
       res.status(200).json({ message: 'Событие успешно добавлено' })
     } catch (error) {

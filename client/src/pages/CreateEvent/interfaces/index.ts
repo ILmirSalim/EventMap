@@ -13,7 +13,7 @@ export interface Event {
     // coordinates: [number, number];
     users: [],
     rating: number[],
-    userCreatedEvent: string
+    userCreatedEvent: string,
     feedbackUser?: {
       user: string;
       feedback: string;
