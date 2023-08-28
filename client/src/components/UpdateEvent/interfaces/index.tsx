@@ -10,6 +10,7 @@ export interface Event {
     location: {
       coordinates: [number, number];
     }
+    // coordinates: [number, number];
     users: [],
     rating: number[],
     userCreatedEvent: string,
@@ -19,7 +20,7 @@ export interface Event {
     }[]
   }
 
-  export interface EventState {
+  export default interface IEventState {
     status: 'idle' | 'loading' | 'succeeded' | 'failed';
     event: Event | null;
     events: Event[] | null;

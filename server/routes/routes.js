@@ -37,6 +37,7 @@ routes.post('/newevent', eventController.addEvent)
 routes.delete('/deleteEvent', eventController.deleteEvents)
 routes.get('/events', eventController.getAllEvents)
 routes.post('/addUserEvent', eventController.addUserToEvent)
+routes.put('/updateEvent', eventController.updateEvent)
 routes.post('/search', eventController.searchEvents);
 routes.post('/addUserToEvent', eventController.addUserToEvent)
 routes.post('/addFeedbackToEvent', eventController.addFeedbackToEvent)

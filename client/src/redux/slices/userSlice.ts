@@ -75,13 +75,12 @@ export const deleteUser = createAsyncThunk<AuthResponse, UserProfile>(
     }
   }
 );
-export const addUserInEvent = createAsyncThunk<void, { eventId: string, userId: string | undefined }>(
+export const addUserInEvent = createAsyncThunk<void, { eventId: string, userId: string | undefined, userName: string }>(
   'auth/addUserToEvent',
-  async ({ eventId, userId }) => {
+  async ({ eventId, userId, userName }) => {
     try {
-      console.log('userId', userId);
       
-      await axios.post('http://localhost:3002/api/addUserToEvent', { eventId, userId });
+      await axios.post('http://localhost:3002/api/addUserToEvent', { eventId, userId, userName });
       
     } catch (error) {
       console.log(error);

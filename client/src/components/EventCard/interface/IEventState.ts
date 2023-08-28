@@ -10,7 +10,10 @@ export interface Event {
   location: {
     coordinates: [number, number];
   }
-  users: [],
+  users: [{
+    userId: string,
+    userName: string
+  }],
   rating: number[],
   userCreatedEvent: string
   feedbackUser?: {

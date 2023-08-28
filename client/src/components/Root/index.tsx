@@ -27,7 +27,8 @@ export const Root = () => {
   const handleToggleChat = () => {
     setIsChatOpen(!isChatOpen);
   }
-
+  
+  
   useEffect(() => {
     
     const handleMessage = (data: any) => {

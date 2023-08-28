@@ -12,6 +12,7 @@ import { EventCard } from './components/EventCard/index';
 import AuthComponent from './components/Auth';
 import { Root } from './components/Root';
 import store from './redux/store/store'
+import UpdateEvent from './components/UpdateEvent';
 
 const router = createBrowserRouter([
   {
@@ -45,6 +46,10 @@ const router = createBrowserRouter([
       {
         path: "/authorization",
         element: <AuthComponent />,
+      },
+      {
+        path: "/updateEvent/:id",
+        element: <UpdateEvent />,
       }
     ],
   },

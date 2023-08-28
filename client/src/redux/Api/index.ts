@@ -69,8 +69,20 @@ export const eventAPI = {
   },
   async deleteEvent(eventId: any): Promise<Event> {
     try {
-      console.log('del', eventId);
       const response: AxiosResponse<Event> = await axios.delete<Event>('http://localhost:3002/api/deleteEvent',  {data: { eventId }});
+      
+      return response.data;
+    } catch (err) {
+      console.log(err);
+      throw new Error('Failed to create event');
+    }
+  },
+
+  async updateEvent(event: Event): Promise<Event> {
+    try {
+      console.log('event', event);
+      
+      const response: AxiosResponse<Event> = await axios.put<Event>('http://localhost:3002/api/updateEvent',  event );
       
       return response.data;
     } catch (err) {

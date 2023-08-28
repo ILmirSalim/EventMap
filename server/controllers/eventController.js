@@ -12,24 +12,42 @@ class EventsController {
     }
   };
 
+  // async addUserToEvent(req, res) {
+  //   try {
+  //     const eventId = req.body.eventId;
+  //     const userId = req.body.userId;
+  //     const userName = req.body.userName;
+
+  //     const eventt = await EventModel.findById(eventId);
+  //     if (eventt.users.includes(userId)) {
+  //       return res.status(400).json({ message: 'User is already added to the event' });
+  //     }
+  //     const event = await EventModel.findByIdAndUpdate(eventId, { $push: { users: {userId, userName }} }, { new: true });
+  //     res.status(200).json(event);
+
+  //   } catch (e) {
+  //     console.log('This is error', e.message);
+  //     res.status(400).json({ message: e.message });
+  //   }
+  // };
   async addUserToEvent(req, res) {
     try {
       const eventId = req.body.eventId;
-      const userId = req.body.userId;
-
-      const eventt = await EventModel.findById(eventId);
-      if (eventt.users.includes(userId)) {
+      const user = { userId: req.body.userId, userName: req.body.userName };
+  
+      const event = await EventModel.findById(eventId);
+      if (event.users.some((existingUser) => existingUser.userId === user.userId)) {
         return res.status(400).json({ message: 'User is already added to the event' });
       }
-      const event = await EventModel.findByIdAndUpdate(eventId, { $push: { users: userId } }, { new: true });
-      res.status(200).json(event);
-
-    } catch (e) {
-      console.log('This is error', e.message);
-      res.status(400).json({ message: e.message });
+  
+      event.users.push(user);
+      const updatedEvent = await event.save();
+      res.status(200).json(updatedEvent);
+    } catch (error) {
+      console.log('Error:', error.message);
+      res.status(400).json({ message: error.message });
     }
   };
-
   async addFeedbackToEvent(req, res) {
     try {
       const eventId = req.body.eventId;
@@ -59,17 +77,45 @@ class EventsController {
     }
   }
 
+  async updateEvent(req, res) {
+    
+    try {
+      const event = await EventModel.findByIdAndUpdate(req.body.id, {
+        title: req.body.title,
+        description: req.body.description,
+        locationType: req.body.locationType,
+        location: {
+          type: req.body.location.type,
+          coordinates: req.body.location.coordinates
+        },
+        address: req.body.address,
+        day: req.body.day,
+        time: req.body.time,
+        category: req.body.category,
+        userCreatedEvent: req.body.userCreatedEvent
+      }, { new: true })
+      
+      if (!event) {
+        return res.status(404).json({ message: 'Событие не найдено' })
+      }
+
+      res.status(200).json({ message: 'Событие успешно обновлено!', event })
+    } catch (error) {
+      res.status(400).json({ message: 'Произошла ошибка при обновлении события!', error })
+    }
+  };
+
   async removeUserFromEvent(req, res) {
     try {
       const eventId = req.body.eventId;
       const userId = req.body.userId;
 
-      await EventModel.findByIdAndUpdate(eventId, { $pull: { users: userId } }, { new: true });
-
-      // if (!event.users.includes(userId)) {
-      //     return res.status(400).json({ message: 'User is not part of the event' });
-      // }
-
+      await EventModel.findByIdAndUpdate(
+        eventId, 
+        { $pull: { users: { userId } } }, 
+        { new: true }
+      );
+     
       res.status(200).json({ message: 'User remove in event' });
 
     } catch (e) {
@@ -96,7 +142,10 @@ class EventsController {
     try {
       const userId = req.body.userId;
 
-      const events = await EventModel.find({ users: userId });
+      // const events = await EventModel.find({ users: userId });
+      const events = await EventModel.find({ 
+        users: { $elemMatch: { userId } } 
+      });
 
       res.status(200).json(events);
 

@@ -19,7 +19,10 @@ const eventSchema = new Schema({
   day: { type: Date },
   time: { type: String },
   category: { type: String },
-  users: [String],
+  users: [{
+    userId: { type: String },
+    userName: { type: String }
+  }],
   userCreatedEvent: { type: String },
   rating: [Number],
   feedbackUser: [{

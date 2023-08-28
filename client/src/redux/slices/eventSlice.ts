@@ -31,6 +31,14 @@ export const deleteEvent = createAsyncThunk(
   }
 )
 
+export const updateEvent = createAsyncThunk(
+  'event/update',
+  async (newEvent:IEvent) => {
+    
+    return await eventAPI.updateEvent(newEvent)
+  }
+)
+
 export const searchEvents = createAsyncThunk(
   'event/search',
   async (
@@ -86,6 +94,14 @@ export const eventSlice = createSlice({
         state.event = null;
       })
       .addCase(deleteEvent.fulfilled, (state, action) => {
+        state.status = 'succeeded';
+        state.event = action.payload;
+      })
+      .addCase(updateEvent.pending, (state) => {
+        state.status = 'loading';
+        state.event = null;
+      })
+      .addCase(updateEvent.fulfilled, (state, action) => {
         state.status = 'succeeded';
         state.event = action.payload;
       })
