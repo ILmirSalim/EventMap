@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { RootState, AppDispatch } from "../../../redux/store/store";
-import { useSelector, useDispatch } from "react-redux";
-import axios from 'axios';
+import { RootState } from "../../../redux/store/store";
 import { Event } from '../../CreateEvent/interfaces';
+import { wrapperVisEvents } from './style';
+import { useSelector } from "react-redux";
 import { Link } from "react-router-dom";
+import axios from 'axios';
 
 const VisitedEvents: React.FC = () => {
     const [events, setEvents] = useState<Event[]>([])
@@ -11,12 +12,8 @@ const VisitedEvents: React.FC = () => {
 
     const getUserEvents = async (userId: string | undefined) => {
         try {
-
             const response = await axios.post('http://localhost:3002/api/getEventsByUserId', { userId })
-            //   dispatch(getAllEvents())
-
             setEvents(response.data)
-            // return response.data;
         } catch (error) {
             console.log(error);
         }
@@ -29,10 +26,7 @@ const VisitedEvents: React.FC = () => {
         <div className='shadow-xl shadow-white w-[1200px] h-full flex justify-center '>
             {events.length === 0 && <div>Нет событий в которых участвует пользователь</div>}
             <div className='flex flex-wrap'>
-                {events && events.map((event) => <div key={event._id} className='flex flex-col 
-                justify-center text-center items-center h-48 w-48 ml-[10px]
-                bg-gradient-to-r from-green-400 to-cyan-400 rounded-xl 
-                hover:scale-110 transform transition-all duration-200 shadow-xl shadow-white'>
+                {events && events.map((event) => <div key={event._id} className={wrapperVisEvents}>
                     <div className='p-[5px]'>Название события:{event.title}</div>
                     <div className='p-[5px]'>Категория события:{event.category}</div>
                     <Link to={`/event/${event._id}`} className='font-bold text-white'>Перейти в событие...</Link>

@@ -43,14 +43,9 @@ const AuthComponent: React.FC = () => {
     const { name, value } = event.target;
     setUserCredentials((prevState) => ({ ...prevState, [name]: value }));
   };
+  
   useEffect(() => {
-    
-    if (userCredentials.email && userCredentials.password ) {
-      setDisabled(false)
-    } else {
-      setDisabled(true)
-    }
-   
+    setDisabled(!(userCredentials.email && userCredentials.password));
     
   }, [ userCredentials.password, userCredentials.email])
 

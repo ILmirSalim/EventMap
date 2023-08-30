@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useMemo, useCallback } from 'react';
 import { YMaps, Map, Placemark, GeolocationControl } from "@pbe/react-yandex-maps";
 import { useDispatch, useSelector } from 'react-redux';
-import { addEvent, getAllEvents } from '../../redux/slices/eventSlice';
+import { addEvent } from '../../redux/slices/eventSlice';
 import { AppDispatch, RootState } from '../../redux/store/store'
 import { Event, EventState } from './interfaces';
 import socketIOClient from 'socket.io-client';
@@ -22,7 +22,7 @@ export const CreateEvent = () => {
 
   const user = useSelector((state: RootState) => state.auth.user)
   const dispatch: AppDispatch = useDispatch<AppDispatch>()
-  
+
   const setPlacemarkInMap = (event: any) => {
     const clickedCoordinates = [event.get('coords')[0], event.get('coords')[1]];
     setCoordinates(clickedCoordinates);
@@ -31,9 +31,9 @@ export const CreateEvent = () => {
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const point = "Point"
-    
+
     const newEvent = {
-      
+
       title: title,
       description: description,
       locationType: locationType,
@@ -47,7 +47,7 @@ export const CreateEvent = () => {
       day: day,
       time: time,
       category: category,
-      userCreatedEvent: userCreatedEvent || '' 
+      userCreatedEvent: userCreatedEvent || ''
     };
 
     try {
@@ -181,7 +181,7 @@ export const CreateEvent = () => {
         </div>
       </div>
       {showNotification && (
-        <div style={{ position: 'fixed', bottom: 20, right: 20, padding: 10, background: 'gray', color: 'white' }}>
+        <div className="fixed bottom-20 right-20 p-4 bg-gray-500 text-white">
           Событие успешно добавлено!
         </div>
       )}

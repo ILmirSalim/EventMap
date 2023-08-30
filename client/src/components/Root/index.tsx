@@ -27,42 +27,27 @@ export const Root = () => {
   const handleToggleChat = () => {
     setIsChatOpen(!isChatOpen);
   }
-  
-  
+
   useEffect(() => {
-    
-    const handleMessage = (data: any) => {
-      dispatch(addMessage(data))
-    };
-    socket.on('responce', handleMessage);
-    socket.on('responce', () => {
+    const handleResponse = (data: any) => {
+      dispatch(addMessage(data));
       setShowNotification(true);
 
       setTimeout(() => {
         setShowNotification(false);
       }, 5000);
-    });
+    };
+
+    socket.on('response', handleResponse);
+
     return () => {
-      console.log('Stopping listening to chat message!');
-      // socket.off('responce', handleMessage);
-      socket.disconnect()
+      console.log('Stopping listening to response!');
+      socket.off('response', handleResponse);
+      // socket.disconnect();
     };
   }, [dispatch]);
-  // useEffect(() => {
-  //   socket.on('responce', () => {
-  //     setShowNotification(true);
 
-  //     setTimeout(() => {
-  //       setShowNotification(false);
-  //     }, 5000);
-  //   });
-  // }, [socket]);
-  // useEffect(() => {
-  //   const handleEvent = () => {
-  //     setShowNotification(true)
-  //     console.log('new event!!');
 
-  //   };
   console.log(messages);
 
   return (<div className="pl-[50px] bg-gradient-to-r from-teal-200 to-lime-200 pr-[50px] ">
@@ -72,13 +57,13 @@ export const Root = () => {
       <div className="text-2xl text-green-600 font-bold">EventMap</div>
 
       {isAuthenticated && (
-        <>
-          <NavLink className="pl-[50px] w-1/5" to="/">Главная страница</NavLink>
-          <NavLink className="pl-[50px] w-1/5" to="/search-event">Поиск мероприятий</NavLink>
-          <NavLink className="pl-[50px] w-1/5" to="/create-event">Создать мероприятие</NavLink>
-          <NavLink className="pl-[50px] w-1/5" to="/detail-event">Мои мероприятия</NavLink>
-          <NavLink className="pl-[50px] w-1/5" to="/user-profile">Профиль</NavLink>
-        </>
+        <div className="flex">
+          <NavLink className="pl-[50px] flex items-center justify-center" to="/">Главное меню</NavLink>
+          <NavLink className="pl-[50px] " to="/search-event">Поиск мероприятий</NavLink>
+          <NavLink className="pl-[50px] " to="/create-event">Создать мероприятие</NavLink>
+          <NavLink className="pl-[50px] " to="/detail-event">Мои мероприятия</NavLink>
+          <NavLink className="pl-[50px] flex items-center" to="/user-profile">Профиль</NavLink>
+        </div>
       )}
       {!isAuthenticated && <div className="flex items-center justify-between w-[1300px]">
         <NavLink className="pl-[50px] w-1/5" to="/">Главная страница</NavLink>
@@ -101,14 +86,17 @@ export const Root = () => {
         </div>}
       </div>}
       {showNotification && (
-        lastMessage.name === user?.userName ? ( null ) : (<div className="fixed bottom-10 left-20 p-[10px] bg-green-500 text-white flex flex-col rounded-xl">
-        <div>
-          Новое сообщение!
-        </div>
-        <div>
-          От пользователя: {lastMessage.name}
-        </div>
-      </div>)
+        lastMessage.name === user?.userName ? (null) :
+          (<div className="fixed bottom-10 left-20 
+            p-[10px] bg-green-500 
+            text-white flex flex-col rounded-xl">
+            <div>
+              Новое сообщение!
+            </div>
+            <div>
+              От пользователя: {lastMessage.name}
+            </div>
+          </div>)
       )}
     </div>
   </div>)

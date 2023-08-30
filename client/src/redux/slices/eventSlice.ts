@@ -24,17 +24,16 @@ export const getAllEvents = createAsyncThunk(
 
 export const deleteEvent = createAsyncThunk(
   'event/delete',
-  async (eventId:string) => {
+  async (eventId: string) => {
     console.log('slice', eventId);
-    
+
     return await eventAPI.deleteEvent(eventId)
   }
 )
 
 export const updateEvent = createAsyncThunk(
   'event/update',
-  async (newEvent:IEvent) => {
-    
+  async (newEvent: IEvent) => {
     return await eventAPI.updateEvent(newEvent)
   }
 )
@@ -54,7 +53,6 @@ export const searchEvents = createAsyncThunk(
 
     }
   ) => {
-    
     return await eventAPI.searchEvents(title, category, startDate, endDate, longitude, latitude, distance);
   }
 );
@@ -107,6 +105,5 @@ export const eventSlice = createSlice({
       })
   },
 });
-
 // export const { } = eventSlice.actions
 export default eventSlice.reducer;

@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
-import OrganizedEvents from './components/OrganizedEvents/OrganizedEvents';
+import OrganizedEvents from './components/OrganizedEvents';
 import VisitedEvents from './components/VisitedEvents';
+import { buttonOrganized, buttonVisited } from './style';
 
 type TabNameType = 'visited' | 'organized';
 
@@ -10,21 +11,17 @@ const EventsTabs: React.FC = () => {
   const handleTabChange = (tabName: TabNameType): void => {
     setActiveTab(tabName);
   }
-
+  
   return (
     <div className='h-screen '>
       <div className='pb-[20px] flex justify-center  items-center'>
-        <button className='mr-[40px] p-[5px] rounded-xl outline-none bg-gradient-to-r 
-        from-green-400 to-cyan-400 hover:scale-110 transform transition-all duration-200 
-        shadow-xl shadow-white' 
-        onClick={() => handleTabChange('visited')}>Посещаемые мероприятия</button>
+        <button className={buttonVisited}
+          onClick={() => handleTabChange('visited')}>Посещаемые мероприятия</button>
 
-        <button className=' p-[5px] rounded-xl outline-none bg-gradient-to-r 
-        from-green-400 to-cyan-400 hover:scale-110 transform transition-all 
-        duration-200 shadow-xl shadow-white' 
-        onClick={() => handleTabChange('organized')}>Организуемые мероприятия</button>
+        <button className={buttonOrganized}
+          onClick={() => handleTabChange('organized')}>Организуемые мероприятия</button>
       </div>
-      {activeTab === 'visited' && <VisitedEvents/>}
+      {activeTab === 'visited' && <VisitedEvents />}
       {activeTab === 'organized' && <OrganizedEvents />}
     </div>
   );

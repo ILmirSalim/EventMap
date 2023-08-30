@@ -1,13 +1,19 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { RootState, } from '../../redux/store/store'
-import { useSelector } from 'react-redux';
+import { RootState, AppDispatch } from '../../redux/store/store'
+import { useSelector, useDispatch } from 'react-redux';
 import avatar from '../../assets/avatar.svg'
-
+import { getUser, login } from '../../redux/slices/userSlice';
+interface ResponsePayload {
+  avatar?: string;
+  // Другие свойства, присутствующие в response.payload
+}
 export const AvatarUpload = () => {
   const [selectedFile, setSelectedFile] = useState<File>();
   const [path, setPath] = useState<string | undefined>('')
+  const [newPath, setNewPath] = useState<string | undefined>()
   const user = useSelector((state: RootState) => state.auth.user)
+  const dispatch = useDispatch<AppDispatch>()
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.files && event.target.files.length > 0) {
       setSelectedFile(event.target.files[0]);
@@ -20,7 +26,7 @@ export const AvatarUpload = () => {
         formData.append('avatar', selectedFile);
         formData.append('_id', userId)
 
-        const response = await axios.post(
+        await axios.post(
           'http://localhost:3002/api/upload',
           formData,
           {
@@ -30,10 +36,14 @@ export const AvatarUpload = () => {
 
           }
         );
-        const avatarPath = response.data.avatarPath
+        const response = await dispatch(getUser({ email: user?.email }));
+        // setNewPath(response.data);
 
-        // Обработка успешного ответа
-        console.log(typeof (avatarPath));
+        console.log('newPath', newPath);
+
+        // dispatch(getUser({email: user?.email}))
+        alert('Аватар успешно добавлен!')
+
       } catch (error) {
         console.error(error);
         // Обработка ошибки
@@ -45,6 +55,7 @@ export const AvatarUpload = () => {
 
   useEffect(() => {
     setPath(user?.avatar?.split('\\').pop())
+
 
   }, [user, path])
 

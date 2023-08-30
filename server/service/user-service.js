@@ -104,6 +104,16 @@ class UserService {
         return { ...tokens, user: userDto }
     }
 
+    async getUser(email) {
+        const user = await UserModel.findOne( email )
+        console.log('email-1', email);
+        if (!user) {
+            return res.status(400).json({ message: `Пользователь ${email} не найден ` })
+        }  
+        
+        return { user }
+    }
+
 }
 
 module.exports = new UserService()

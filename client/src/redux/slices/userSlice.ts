@@ -13,6 +13,11 @@ interface UserProfile {
   avatarPath: string
 }
 
+interface UserAuth {
+  email: string | undefined
+
+}
+
 interface AuthResponse {
   accessToken: string;
   refreshToken: string;
@@ -21,8 +26,8 @@ interface AuthResponse {
 
 
 export interface IMessage {
-  text: string, 
-  name: string, 
+  text: string,
+  name: string,
   id: string
 }
 
@@ -59,6 +64,26 @@ export const login = createAsyncThunk<AuthResponse, UserProfile>(
   }
 );
 
+export const getUser = createAsyncThunk<AuthResponse, UserAuth>(
+  'auth/getUser',
+  async (email: UserAuth) => {
+
+    try {
+      console.log(typeof email);
+
+      const response = await axios.get<AuthResponse>(
+        'http://localhost:3002/api/getUser',
+        { data: email }
+
+      );
+      console.log(response.data);
+      return response.data;
+    } catch (error: any) { // явно указываем тип ошибки как "any"
+      throw new Error(error.response?.data.error);
+    }
+  }
+);
+
 export const deleteUser = createAsyncThunk<AuthResponse, UserProfile>(
   'auth/delete',
   async (email) => {
@@ -79,9 +104,9 @@ export const addUserInEvent = createAsyncThunk<void, { eventId: string, userId: 
   'auth/addUserToEvent',
   async ({ eventId, userId, userName }) => {
     try {
-      
+
       await axios.post('http://localhost:3002/api/addUserToEvent', { eventId, userId, userName });
-      
+
     } catch (error) {
       console.log(error);
     }
@@ -187,7 +212,17 @@ export const authSlice = createSlice({
         state.user = null
 
       })
+      .addCase(getUser.pending, (state, action) => {
+        state.isAuthenticated = true;
 
+        state.error = null;
+      })
+      .addCase(getUser.fulfilled, (state, action) => {
+        state.isAuthenticated = false;
+        state.token = null
+        state.user = action.payload.user;
+
+      })
   },
 });
 

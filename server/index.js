@@ -21,21 +21,33 @@ const io = require('socket.io')(http, {
 
 app.use(express.static('public'));
 
-// const users = [];
+const usersOnl = []
 io.on('connection', function (socket) {
-
-  console.log(`${socket.id} user connected`);
+  console.log(`${socket.id} пользователь подключен`);
 
   socket.on('disconnect', function () {
-    console.log(`${socket.id} user disconnected`);
+    console.log(`${socket.id} пользователь отключился`);
+    // usersOnl = usersOnl.filter((user) => user.socketID !== socket.id);
+    // io.emit('responseNewUser', usersOnl);
   });
 
   socket.on('chat message', function (data) {
+    if (data.userId) {
+      // Отправляем сообщение конкретному пользователю
+      socket.to(data.userId).emit('response', data); // Используем socket.to вместо io.to
+    } else {
+      // Рассылаем сообщение всем подключенным пользователям
+      io.emit('response', data);
+    }
 
-    io.emit('responce', data);
-    console.log(data);
   });
 
+  socket.on('newUser', (data) => {
+    usersOnl.push(data)
+    io.emit('responseNewUser', usersOnl)
+  })
+
+});
 // //   socket.on('create event', function (event) {
 
 // //     io.emit('responceEvent', event);
@@ -47,21 +59,9 @@ io.on('connection', function (socket) {
 //   //       id: socket.id,
 //   //       name: data.name,
 //   //   };
-    
+
 //   //   users.push(user);
-    
-//   //   // Отправка обновленного списка пользователей всем подключенным клиентам
-//   //   io.emit('user list', users);
-//   //   console.log('user list', users);
-//   //   socket.on('disconnect', () => {
-//   //       const index = users.findIndex((u) => u.id === socket.id);
-//   //       if (index !== -1) {
-//   //           users.splice(index, 1);
-//   //           io.emit('user list', users);
-//   //       }
-//   //   });
-//   // });
-});
+// });
 
 app.use(cors({
   credentials: true,
@@ -85,13 +85,6 @@ const storage = multer.diskStorage({
 })
 // Инициализация multer с указанием хранилища
 const upload = multer({ storage });
-
-// Маршрут для загрузки аватара
-// app.post('/api/upload', upload.single('avatar'), (req, res) => {
-//   // Здесь происходит обработка загруженного аватара
-//   console.log(req.file); // информация о файле (имя, размер, путь и т.д.)
-//   res.json({ message: 'Аватар успешно загружен' });
-// });
 
 app.post('/api/upload', upload.single('avatar'), async (req, res) => {
   try {

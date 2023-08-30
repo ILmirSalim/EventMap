@@ -1,13 +1,15 @@
 import React from 'react';
 import { useSelector } from 'react-redux';
-import { EventState } from '../../../CreateEvent/interfaces';
-import { RootState } from '../../../../redux/store/store'
+import { EventState } from '../../CreateEvent/interfaces';
+import { RootState } from '../../../redux/store/store'
 import { Link } from "react-router-dom";
+import { wrapperOrgEvents } from './style';
+
 const OrganizedEvents: React.FC = () => {
   const user = useSelector((state: RootState) => state.auth.user)
   const email = user!.email
-
   const { events } = useSelector((state: { event: EventState }) => state.event);
+  
   const organizedEvents = events?.filter(event =>
     event.userCreatedEvent.includes(email)
   )
@@ -17,9 +19,7 @@ const OrganizedEvents: React.FC = () => {
       {organizedEvents?.length === 0 && <div>Нет организуемых событий...</div>}
       <div className='flex flex-wrap w-full '>
         {organizedEvents?.map(event => (
-          <div key={event._id} className='flex flex-col justify-center text-center items-center 
-            m-[10px] h-52 w-48 p-[5px] bg-gradient-to-r from-green-400 to-cyan-400 rounded-xl 
-            hover:scale-110 transform transition-all duration-400 shadow-xl shadow-white'>
+          <div key={event._id} className={wrapperOrgEvents}>
             <h2 className='font-bold'>Название события:</h2>
             <div>{event.title}</div>
             <div className='font-bold mt-[5px]'>Дата события:</div>

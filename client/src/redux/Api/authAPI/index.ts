@@ -20,19 +20,3 @@ export const authAPI = {
         }
     }
 }
-
-
-// export const authAPI = {
-//     async authUser(email: string, password: string) {
-//         try {
-//             const response = await axios.post('http://localhost:3002/api/login', {
-//                 email,
-//                 password,
-//             });
-//             localStorage.setItem('token', response.data.refreshToken);
-//             return response.data;
-//         } catch (error) {
-//             console.log(error);
-//         }
-//     }
-// }

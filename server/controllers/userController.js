@@ -35,7 +35,7 @@ class UserController {
 
     async setAvatar(req, res) {
         try {
-            const { email } = req.body
+            const { email } = req.body.email
             const user = await userService.updateUserAvatar(email)
             return res.json(user)
         } catch (error) {
@@ -110,6 +110,22 @@ class UserController {
             next(e)
         }
     };
+    
+    async getUserinDatabase(req, res, next) {
+        try {
+            const { email } = req.body;
+            console.log(email);
+            const userData = await userService.getUser(email);
+            console.log(userData);
+            return res.json(userData)
+            
+        } catch (error) {
+            console.log(error);
+            return res.status(500).json({ error: 'Ошибка сервера' });
+        }
+    };
+
+
 
 
 }
