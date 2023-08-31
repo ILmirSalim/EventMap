@@ -13,11 +13,6 @@ interface UserProfile {
   avatarPath: string
 }
 
-interface UserAuth {
-  email: string | undefined
-
-}
-
 interface AuthResponse {
   accessToken: string;
   refreshToken: string;
@@ -43,7 +38,7 @@ const initialState: AuthState = {
   token: null,
   user: null,
   error: null,
-  messages: []
+  messages: [],
 };
 
 // функция для отправки запроса на сервер для авторизации
@@ -56,7 +51,7 @@ export const login = createAsyncThunk<AuthResponse, UserProfile>(
         userData
       );
       localStorage.setItem('token', response.data.accessToken);
-      localStorage.setItem('user', response.data.user.avatarPath);
+      localStorage.setItem('user', JSON.stringify(response.data.user));
       return response.data;
     } catch (error: any) { // явно указываем тип ошибки как "any"
       throw new Error(error.response?.data.error);
@@ -64,19 +59,22 @@ export const login = createAsyncThunk<AuthResponse, UserProfile>(
   }
 );
 
-export const getUser = createAsyncThunk<AuthResponse, UserAuth>(
+export const getUser = createAsyncThunk<AuthResponse, string>(
   'auth/getUser',
-  async (email: UserAuth) => {
-
+  async (email: any) => {
+    console.log('email', email);
+    
     try {
-      console.log(typeof email);
-
       const response = await axios.get<AuthResponse>(
         'http://localhost:3002/api/getUser',
-        { data: email }
-
+        {
+          params: {
+            email: email
+          }
+        }
       );
-      console.log(response.data);
+      console.log('responce', response.data);
+      
       return response.data;
     } catch (error: any) { // явно указываем тип ошибки как "any"
       throw new Error(error.response?.data.error);
@@ -104,9 +102,7 @@ export const addUserInEvent = createAsyncThunk<void, { eventId: string, userId: 
   'auth/addUserToEvent',
   async ({ eventId, userId, userName }) => {
     try {
-
       await axios.post('http://localhost:3002/api/addUserToEvent', { eventId, userId, userName });
-
     } catch (error) {
       console.log(error);
     }
@@ -192,7 +188,6 @@ export const authSlice = createSlice({
       .addCase(register.fulfilled, (state, action) => {
         state.isAuthenticated = true;
         state.token = action.payload.refreshToken;
-        // добавляем данные профиля в стейт
         state.user = action.payload.user;
         state.error = null;
       })
@@ -203,7 +198,6 @@ export const authSlice = createSlice({
       })
       .addCase(deleteUser.pending, (state, action) => {
         state.isAuthenticated = true;
-
         state.error = null;
       })
       .addCase(deleteUser.fulfilled.type, (state, action) => {
@@ -214,14 +208,10 @@ export const authSlice = createSlice({
       })
       .addCase(getUser.pending, (state, action) => {
         state.isAuthenticated = true;
-
         state.error = null;
       })
       .addCase(getUser.fulfilled, (state, action) => {
-        state.isAuthenticated = false;
-        state.token = null
         state.user = action.payload.user;
-
       })
   },
 });

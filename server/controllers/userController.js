@@ -113,8 +113,8 @@ class UserController {
     
     async getUserinDatabase(req, res, next) {
         try {
-            const { email } = req.body;
-            console.log(email);
+            const email  = req.query.email;
+            console.log('email in getUser', email);
             const userData = await userService.getUser(email);
             console.log(userData);
             return res.json(userData)

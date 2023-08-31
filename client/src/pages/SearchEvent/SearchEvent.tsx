@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
 import { Link } from "react-router-dom";
-import Event from './interface/ievent'
+import Event from './interface/IEvent'
 import { AppDispatch } from '../../redux/store/store'
 import { useDispatch } from 'react-redux';
 import { searchEvents } from '../../redux/slices/eventSlice';
@@ -59,7 +59,8 @@ export const SearchEvent: React.FC = () => {
     );
   }, [])
   return (
-    <div className='h-[500px] bg-gradient-to-r from-teal-200 to-lime-200 shadow-xl shadow-white w-[1200px] h-full '>
+    <div className='h-[500px] bg-gradient-to-r from-teal-200 to-lime-200 shadow-xl shadow-white 
+    w-[1200px] h-full '>
       <div className='p-[10px] flex '>
         <div className='flex flex-col w-[300px]'>
           <label className='font-bold ml-[10px] '>Выберите нужные фильтры: </label>

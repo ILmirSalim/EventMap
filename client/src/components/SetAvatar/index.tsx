@@ -13,6 +13,7 @@ export const AvatarUpload = () => {
   const [path, setPath] = useState<string | undefined>('')
   const [newPath, setNewPath] = useState<string | undefined>()
   const user = useSelector((state: RootState) => state.auth.user)
+  // const userUpdate = useSelector((state: RootState) => state.auth.userUpdate)
   const dispatch = useDispatch<AppDispatch>()
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.files && event.target.files.length > 0) {
@@ -36,17 +37,12 @@ export const AvatarUpload = () => {
 
           }
         );
-        const response = await dispatch(getUser({ email: user?.email }));
-        // setNewPath(response.data);
-
-        console.log('newPath', newPath);
-
-        // dispatch(getUser({email: user?.email}))
+        
+        dispatch(getUser(user!.email))
         alert('Аватар успешно добавлен!')
 
       } catch (error) {
         console.error(error);
-        // Обработка ошибки
       }
     } else {
       alert('Добавьте картинку для добавления!');
@@ -55,10 +51,8 @@ export const AvatarUpload = () => {
 
   useEffect(() => {
     setPath(user?.avatar?.split('\\').pop())
-
-
   }, [user, path])
-
+ 
   return (
     <div className='flex flex-col justify-center items-center '>
       {!user?.avatar && <img className='h-[100px] w-[100px]' src={avatar} alt="Avatar" />}

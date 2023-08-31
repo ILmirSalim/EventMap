@@ -1,25 +1,25 @@
-import React, { useEffect, useState, useMemo, useCallback } from "react";
-import { Outlet, NavLink } from "react-router-dom";
-import { useSelector } from 'react-redux';
+import React, { useEffect, useState } from "react";
+import { addMessage } from "../../redux/slices/userSlice";
+import { AppDispatch } from '../../redux/store/store'
 import { RootState } from '../../redux/store/store'
-import Chat from "../chat";
-import chatImage from '../../assets/image.svg'
+import { Outlet, NavLink } from "react-router-dom";
 import EventState from "./interfaces/iEventState";
 import socketIOClient from 'socket.io-client';
-import Logo from '../../assets/logo.svg'
-import { addMessage } from "../../redux/slices/userSlice";
+import chatImage from '../../assets/image.svg'
+import { useSelector } from 'react-redux';
 import { useDispatch } from "react-redux";
-import { AppDispatch } from '../../redux/store/store'
+import Logo from '../../assets/logo.svg'
+import Chat from "../chat";
 
 const ENDPOINT = 'http://localhost:3002';
 const socket = socketIOClient(ENDPOINT);
+
 export const Root = () => {
   const user = useSelector((state: RootState) => state.auth.user)
   const isAuthenticated = useSelector((state: RootState) => state.auth.isAuthenticated);
   const { events } = useSelector((state: { event: EventState }) => state.event);
   const [isChatOpen, setIsChatOpen] = React.useState<boolean>(false);
   const [showNotification, setShowNotification] = useState(false);
-  // const [messages, setMessages] = useState<{ name: string, id: string, text: string }[]>([]);
   const dispatch: AppDispatch = useDispatch<AppDispatch>()
   const messages = useSelector((state: RootState) => state.auth.messages);
   const lastMessage = useSelector((state: RootState) => state.auth.messages[state.auth.messages.length - 1]);
@@ -47,12 +47,9 @@ export const Root = () => {
     };
   }, [dispatch]);
 
-
-  console.log(messages);
-
   return (<div className="pl-[50px] bg-gradient-to-r from-teal-200 to-lime-200 pr-[50px] ">
     <div className="flex shadow-2xl shadow-white items-center">
-      <img src={Logo} alt="" />
+      <img src={Logo} alt="Logo" />
 
       <div className="text-2xl text-green-600 font-bold">EventMap</div>
 
@@ -69,7 +66,6 @@ export const Root = () => {
         <NavLink className="pl-[50px] w-1/5" to="/">Главная страница</NavLink>
         <NavLink className="pl-[50px] w-1/5" to="/user-profile">Войти</NavLink>
       </div>}
-      {/* <NavLink className="pl-[50px] w-1/5" to="/user-profile">Войти</NavLink> */}
     </div>
     <div className="flex items-center justify-center mt-[50px] h-full w-full p-[20px]">
 

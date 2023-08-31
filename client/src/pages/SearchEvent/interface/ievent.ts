@@ -10,7 +10,6 @@ export default interface Event {
   location: {
     coordinates: [number, number];
   }
-  // coordinates: [number, number];
   users: [],
   rating: number[],
   userCreatedEvent: string,

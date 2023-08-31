@@ -44,8 +44,8 @@ const MainPage: React.FC = () => {
   }
 
   return (
-    <div className="">
-      <div className="flex box-border w-full">
+    <div className="w-full">
+      <div className="flex box-border justify-center">
         <YMaps>
           <Map
             className=""
@@ -93,7 +93,7 @@ const MainPage: React.FC = () => {
           </Map>
         </YMaps>
         <div className={wrapperBanner}>
-          <p className="ml-[50px]">
+          <p className="ml-[50px] text-[20px] font-bold">
             Найдите интересные мероприятия поблизости!
           </p>
         </div>
