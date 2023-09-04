@@ -54,11 +54,7 @@ const RegistrationUser: React.FC = () => {
 
   useEffect(() => {
     const user = localStorage.getItem('token')
-    if (email && password && userName && userAge && interestsAndPreferences) {
-      setDisabled(false)
-    } else {
-      setDisabled(true)
-    }
+    setDisabled(!(email && password && userName && userAge && interestsAndPreferences))
     if (user) {
       dispatch(hasUser())
     }
@@ -68,7 +64,6 @@ const RegistrationUser: React.FC = () => {
 
   return (
     <div className='flex flex-col justify-center h-screen'>
-
       {isAuthenticated ? (
         <div className='bg-gradient-to-r from-teal-200 to-lime-200  
         w-96 h-96  shadow-lg shadow-white flex flex-col items-center 

@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from "react";
-import { addMessage } from "../../redux/slices/userSlice";
+import { addMessage, addPrivateMessage } from "../../redux/slices/userSlice";
 import { AppDispatch } from '../../redux/store/store'
 import { RootState } from '../../redux/store/store'
 import { Outlet, NavLink } from "react-router-dom";
-import EventState from "./interfaces/iEventState";
+import { Event } from "./interfaces/iEventState";
 import socketIOClient from 'socket.io-client';
 import chatImage from '../../assets/image.svg'
 import { useSelector } from 'react-redux';
@@ -17,20 +17,31 @@ const socket = socketIOClient(ENDPOINT);
 export const Root = () => {
   const user = useSelector((state: RootState) => state.auth.user)
   const isAuthenticated = useSelector((state: RootState) => state.auth.isAuthenticated);
-  const { events } = useSelector((state: { event: EventState }) => state.event);
+  const [countMessage, setCountMessage] = useState(0);
+  const [newEvent, setNewEvent] = useState<Event>();
+  const [newUpdateEvent, setNewUpdateEvent] = useState<Event>();
+  const [eventType, setEventType] = useState('');
   const [isChatOpen, setIsChatOpen] = React.useState<boolean>(false);
   const [showNotification, setShowNotification] = useState(false);
-  const dispatch: AppDispatch = useDispatch<AppDispatch>()
-  const messages = useSelector((state: RootState) => state.auth.messages);
+  const [eventNotification, setEventNotification] = useState(false);
+  const dispatch: AppDispatch = useDispatch<AppDispatch>();
   const lastMessage = useSelector((state: RootState) => state.auth.messages[state.auth.messages.length - 1]);
 
   const handleToggleChat = () => {
     setIsChatOpen(!isChatOpen);
+    setCountMessage(0)
   }
 
   useEffect(() => {
     const handleResponse = (data: any) => {
-      dispatch(addMessage(data));
+      // console.log('data.recipient', data);
+      // if(data.userId===user?.userName){
+      //   dispatch(addPrivateMessage(data))
+      // }
+      // console.log('data.userId', data.userId);
+      // console.log('user?.userName', user?.userName);
+      // dispatch(addMessage(data));
+
       setShowNotification(true);
 
       setTimeout(() => {
@@ -38,19 +49,57 @@ export const Root = () => {
       }, 5000);
     };
 
-    socket.on('response', handleResponse);
+    // socket.on('response', handleResponse);
 
     return () => {
       console.log('Stopping listening to response!');
       socket.off('response', handleResponse);
-      // socket.disconnect();
     };
   }, [dispatch]);
 
+  useEffect(() => {
+    const handleEvent = (event: any) => {
+      setNewEvent(event)
+      setEventType('newEvent');
+      setEventNotification(true);
+
+      setTimeout(() => {
+        setEventNotification(false);
+      }, 5000);
+
+    };
+   
+    socket.on('responceEvent', handleEvent)
+    return () => {
+      console.log('Stopping listening to responceEvent!');
+      socket.off('responceEvent', handleEvent);
+    };
+  }, []);
+
+  useEffect(() => {
+    const handleUpdateEvent = (updateEvent: any) => {
+      setNewUpdateEvent(updateEvent)
+      setEventType('updateEvent');
+      setEventNotification(true);
+
+      setTimeout(() => {
+        setEventNotification(false);
+      }, 5000);
+
+    };
+
+    socket.on('set update event', handleUpdateEvent)
+
+    return () => {
+      console.log('Stopping listening to responceEvent!');
+      socket.off('set update event', handleUpdateEvent);
+    };
+  }, []);
+  console.log('newUpdateEvent', newUpdateEvent);
+  
   return (<div className="pl-[50px] bg-gradient-to-r from-teal-200 to-lime-200 pr-[50px] ">
     <div className="flex shadow-2xl shadow-white items-center">
       <img src={Logo} alt="Logo" />
-
       <div className="text-2xl text-green-600 font-bold">EventMap</div>
 
       {isAuthenticated && (
@@ -72,10 +121,16 @@ export const Root = () => {
       <Outlet />
       {isAuthenticated && <div>
         <div onClick={handleToggleChat}>
-          {!isChatOpen && <img className="fixed bottom-0 right-0 p-4" alt="chat" src={chatImage} />}
+          {!isChatOpen && <div>
+            <div className="flex justify-center rounded-full w-[10px] h-[10px] 
+            border border-white fixed bottom-[60px] right-[10px]
+             text-red-600 p-4 items-center">{countMessage}</div>
+            <img className="fixed bottom-0 right-0 p-4" alt="chat" src={chatImage} />
+          </div>
+          }
         </div>
         {isChatOpen && <div className="flex flex-col fixed bottom-0 right-0 p-4">
-          <div className="cursor-pointer hover:text-white font-bold" onClick={handleToggleChat}>Свернуть чат</div>
+          <div className="cursor-pointer hover:text-white font-bold ml-[500px]" onClick={handleToggleChat}>Свернуть чат</div>
           <div className="">
             <Chat />
           </div>
@@ -84,8 +139,7 @@ export const Root = () => {
       {showNotification && (
         lastMessage.name === user?.userName ? (null) :
           (<div className="fixed bottom-10 left-20 
-            p-[10px] bg-green-500 
-            text-white flex flex-col rounded-xl">
+            p-[10px] bg-green-500 text-white flex flex-col rounded-xl">
             <div>
               Новое сообщение!
             </div>
@@ -93,6 +147,32 @@ export const Root = () => {
               От пользователя: {lastMessage.name}
             </div>
           </div>)
+      )}
+      {eventNotification && (
+        <div className="fixed bottom-10 left-20 
+        p-[10px] bg-green-500 text-white flex flex-col rounded-xl">
+          {/* /* //   <div>
+        //     Добавлено новое событие!
+        //   </div>
+        //   <div>
+        //     Название события: {newEvent!.title}
+        //   </div> */}
+          {eventType === 'newEvent' && (
+            <div>
+              Добавлено новое событие!
+            </div>
+          )}
+          {eventType === 'updateEvent' && (
+            <div>
+              Обновлено событие!
+            </div>
+          )}
+          <div>
+            Название события: {eventType === 'newEvent' && newEvent!.title} 
+            {eventType === 'updateEvent' && newUpdateEvent!.title}
+            {/* {eventType === 'newEvent' ? newEvent!.title : newUpdateEvent!.title} */}
+          </div>
+        </div>
       )}
     </div>
   </div>)

@@ -28,7 +28,7 @@ export const EventCard = () => {
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setRating(+event.target.value);
   };
-
+  
   const handleNavigate = () => {
     navigate('/search-event');
   };
@@ -105,9 +105,12 @@ export const EventCard = () => {
     flex flex-col justify-center items-center rounded-xl">
       <div className="text-center mt-[-50px] border-white border p-[10px] w-full rounded-xl">
         <h2 className="font-bold"> Название мероприятия: {event.title}</h2>
-        <p><span className="font-bold">Организатор мероприятия:</span> {event.userCreatedEvent}</p>
         <div className="">
-          <p>Участники события:</p>
+        <p><span className="font-bold">Организатор мероприятия:</span> {event.userCreatedEvent}</p>
+        <span className="hover:text-white cursor-pointer">Написать организатору...</span>
+        </div>
+        <div className="">
+          <p className="font-bold">Участники события:</p>
           <div className="flex justify-center items-center">
             {event.users.map((user) => <div className="p-[3px]" key={user.userId}>{user.userName}</div>)}
           </div>

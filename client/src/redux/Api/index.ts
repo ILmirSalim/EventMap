@@ -1,28 +1,11 @@
 import axios, { AxiosResponse } from 'axios';
-
-interface Event {
-
-  title: string,
-  description: string,
-  locationType: string,
-  address: string,
-  day: Date,
-  time: string,
-  category: string,
-  location: {
-    coordinates: [number, number];
-  }
-  userCreatedEvent: string,
-  feedbackUser?: {
-    user: string;
-    feedback: string;
-  }[]
-}
+import { apiServer } from '../../constants';
+import { Event } from './interface/IEvent';
 
 export const eventAPI = {
   async createEvent(newEvent: Event): Promise<Event> {
     try {
-      const response: AxiosResponse<Event> = await axios.post<Event>('http://localhost:3002/api/newevent', newEvent);
+      const response: AxiosResponse<Event> = await axios.post<Event>(`${apiServer}/newevent`, newEvent);
       return response.data;
     } catch (err) {
       console.log(err);
@@ -31,12 +14,11 @@ export const eventAPI = {
   },
   async getAllEvents(): Promise<Event[]> {
     try {
-      const response: AxiosResponse<Event[]> = await axios.get<Event[]>('http://localhost:3002/api/events');
-
+      const response: AxiosResponse<Event[]> = await axios.get<Event[]>(`${apiServer}/events`);
       return response.data;
     } catch (err) {
       console.log(err);
-      throw new Error('Failed to fetch events');
+      throw new Error('Failed to get all events');
     }
   },
 
@@ -49,7 +31,7 @@ export const eventAPI = {
     distance: number): Promise<Event[]> {
     try {
       const response: AxiosResponse<Event[]> = await axios.post<Event[]>(
-        'http://localhost:3002/api/search',
+        `${apiServer}/search`,
         {
           title: title,
           category: category,
@@ -60,34 +42,29 @@ export const eventAPI = {
           distance: distance
         }
       );
-      
       return response.data;
     } catch (err) {
       console.log(err);
-      throw new Error('Failed to fetch events');
+      throw new Error('Failed to search events');
     }
   },
   async deleteEvent(eventId: any): Promise<Event> {
     try {
-      const response: AxiosResponse<Event> = await axios.delete<Event>('http://localhost:3002/api/deleteEvent',  {data: { eventId }});
-      
+      const response: AxiosResponse<Event> = await axios.delete<Event>(`${apiServer}/deleteEvent`, { data: { eventId } });
       return response.data;
     } catch (err) {
       console.log(err);
-      throw new Error('Failed to create event');
+      throw new Error('Failed to delete event');
     }
   },
 
   async updateEvent(event: Event): Promise<Event> {
     try {
-      console.log('event', event);
-      
-      const response: AxiosResponse<Event> = await axios.put<Event>('http://localhost:3002/api/updateEvent',  event );
-      
+      const response: AxiosResponse<Event> = await axios.put<Event>(`${apiServer}/updateEvent`, event);
       return response.data;
     } catch (err) {
       console.log(err);
-      throw new Error('Failed to create event');
+      throw new Error('Failed to update event');
     }
   },
 }

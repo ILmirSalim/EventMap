@@ -32,36 +32,24 @@ io.on('connection', function (socket) {
   });
 
   socket.on('chat message', function (data) {
-    if (data.userId) {
-      // Отправляем сообщение конкретному пользователю
-      socket.to(data.userId).emit('response', data); // Используем socket.to вместо io.to
-    } else {
-      // Рассылаем сообщение всем подключенным пользователям
       io.emit('response', data);
-    }
-
   });
 
   socket.on('newUser', (data) => {
     usersOnl.push(data)
     io.emit('responseNewUser', usersOnl)
   })
+  
+  socket.on('create event', function (event) {
+    io.emit('responceEvent', event);
+  });
 
+  socket.on('update event', function (updateEvent) {
+    
+    io.emit('set update event', updateEvent);
+  });
+  
 });
-// //   socket.on('create event', function (event) {
-
-// //     io.emit('responceEvent', event);
-
-// //   });
-
-//   // socket.on('authenticate', (data) => {
-//   //   const user = {
-//   //       id: socket.id,
-//   //       name: data.name,
-//   //   };
-
-//   //   users.push(user);
-// });
 
 app.use(cors({
   credentials: true,

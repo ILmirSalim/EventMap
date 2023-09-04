@@ -7,6 +7,10 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { Event } from './interfaces';
 import IEventState from './interfaces';
 import socketIOClient from 'socket.io-client';
+import { apiServer } from '../../constants';
+import { updateEventButton } from './style';
+
+const socket = socketIOClient(apiServer);
 
 export const UpdateEvent = () => {
   const [title, setTitle] = useState('');
@@ -36,7 +40,7 @@ export const UpdateEvent = () => {
     event.preventDefault();
     const point = "Point"
     
-    const updateEvent1 = {
+    const modifiedEvent = {
       id: id,
       title: title,
       description: description,
@@ -53,8 +57,8 @@ export const UpdateEvent = () => {
     };
 
     try {
-      dispatch(updateEvent(updateEvent1));
-      // socket.emit('create event', newEvent)
+      dispatch(updateEvent(modifiedEvent));
+      socket.emit('update event', modifiedEvent)
       navigate('/search-event')
     } catch (error) {
       console.error(error);
@@ -140,10 +144,7 @@ export const UpdateEvent = () => {
             onChange={(e) => setCategory(e.target.value)} />
 
           <button
-            className='mt-4 mb-4 w-full bg-gradient-to-r from-green-400 to-cyan-400
-            hover:scale-110 transform transition-all duration-200   
-            hover:text-white active:bg-violet-700 focus:outline-none 
-            focus:ring focus:ring-violet-300 rounded-xl outline-none p-[5px]'
+            className={updateEventButton}
             type="submit">Отредактировать событие</button>
         </form>
       </div>

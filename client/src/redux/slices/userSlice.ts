@@ -23,7 +23,10 @@ interface AuthResponse {
 export interface IMessage {
   text: string,
   name: string,
-  id: string
+  id: string,
+  userId: string,
+  socketID: string,
+  time: string
 }
 
 export interface AuthState {
@@ -31,7 +34,9 @@ export interface AuthState {
   token: string | null;
   user: UserProfile | null;
   error: string | null;
-  messages: IMessage[]
+  messages: IMessage[];
+  privateMessages: IMessage[];
+  notifications: [];
 }
 const initialState: AuthState = {
   isAuthenticated: false,
@@ -39,6 +44,8 @@ const initialState: AuthState = {
   user: null,
   error: null,
   messages: [],
+  privateMessages: [],
+  notifications: []
 };
 
 // функция для отправки запроса на сервер для авторизации
@@ -159,7 +166,13 @@ export const authSlice = createSlice({
     },
     addMessage: (state, action: PayloadAction<IMessage>) => {
       state.messages.push(action.payload);
-    }
+    },
+    addPrivateMessage: (state, action: PayloadAction<IMessage>) => {
+      state.privateMessages.push(action.payload);
+    },
+    // addNotification: (state, action: PayloadAction<IMessage>) => {
+    //   state.notifications.push(action.payload);
+    // }
   },
   extraReducers: (builder) => {
     builder
@@ -216,6 +229,6 @@ export const authSlice = createSlice({
   },
 });
 
-export const { logout, hasUser, addMessage } = authSlice.actions;
+export const { logout, hasUser, addMessage, addPrivateMessage } = authSlice.actions;
 
 export default authSlice.reducer;

@@ -25,8 +25,6 @@ export const getAllEvents = createAsyncThunk(
 export const deleteEvent = createAsyncThunk(
   'event/delete',
   async (eventId: string) => {
-    console.log('slice', eventId);
-
     return await eventAPI.deleteEvent(eventId)
   }
 )

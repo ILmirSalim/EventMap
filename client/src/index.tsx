@@ -13,6 +13,7 @@ import AuthComponent from './components/Auth';
 import { Root } from './components/Root';
 import store from './redux/store/store'
 import UpdateEvent from './components/UpdateEvent';
+import PrivateChat from './components/PrivateChat';
 
 const router = createBrowserRouter([
   {
@@ -50,6 +51,10 @@ const router = createBrowserRouter([
       {
         path: "/updateEvent/:id",
         element: <UpdateEvent />,
+      },
+      {
+        path: `/private-chat`,
+        element: <PrivateChat />,
       }
     ],
   },

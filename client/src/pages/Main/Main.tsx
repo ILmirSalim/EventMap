@@ -62,8 +62,8 @@ const MainPage: React.FC = () => {
                       <h2>Название:${event.title}</h2>
                       <p>Описание:${event.description}</p>
                       <p>Адрес события:${event.address}</p>
-                      <p>День:${event.day}</p>
-                      <p>Время:${event.time}</p>
+                      <p>День:${new Date(event.day).toLocaleDateString()}</p>
+                      <p>Время:${event.time}(мск)</p>
                     `,
                   }}
                   options={{

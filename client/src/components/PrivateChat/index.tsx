@@ -6,7 +6,6 @@ import { RootState, AppDispatch } from '../../redux/store/store'
 import 'react-toastify/dist/ReactToastify.css';
 import { v4 as uuidv4 } from 'uuid';
 import { chatWrapper } from './style';
-import { Link } from 'react-router-dom';
 
 const ENDPOINT = 'http://localhost:3002';
 const socket = socketIOClient(ENDPOINT);
@@ -15,7 +14,7 @@ interface IUserOnlain {
     user: string,
     socketID: string;
 }
-const Chat: React.FC = () => {
+const PrivateChat: React.FC = () => {
     const [message, setMessage] = useState<string>('');
     const [usersData, setUsersData] = useState<IUserOnlain[]>([])
     const [recipient, setRecipient] = useState('')
@@ -41,33 +40,33 @@ const Chat: React.FC = () => {
     const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         setMessage(event.target.value);
     };
-    useEffect(() => {
+    // useEffect(() => {
 
-        socket.emit('newUser', { user: user?.userName, socketID: socket.id })
+    //     socket.emit('newUser', { user: user?.userName, socketID: socket.id })
 
-        socket.on('responseNewUser', (data: IUserOnlain[]) => {
-            const uniqueUsersData: IUserOnlain[] = data.reduce((acc, curr) => {
-                // Добавляем проверку на наличие значения curr перед выполнением сравнения
-                if (curr && curr.user) {
-                    // Проверяем, есть ли уже объект с таким именем в асс
-                    const existingUser = acc.find((user: IUserOnlain) => user.user === curr.user);
-                    // Если объект с таким именем уже существует, не добавляем его в аккумулятор
-                    if (!existingUser) {
-                        acc.push(curr as never);
-                    }
-                }
-                return acc;
-            }, []);
+    //     socket.on('responseNewUser', (data: IUserOnlain[]) => {
+    //         const uniqueUsersData: IUserOnlain[] = data.reduce((acc, curr) => {
+    //             // Добавляем проверку на наличие значения curr перед выполнением сравнения
+    //             if (curr && curr.user) {
+    //                 // Проверяем, есть ли уже объект с таким именем в асс
+    //                 const existingUser = acc.find((user: IUserOnlain) => user.user === curr.user);
+    //                 // Если объект с таким именем уже существует, не добавляем его в аккумулятор
+    //                 if (!existingUser) {
+    //                     acc.push(curr as never);
+    //                 }
+    //             }
+    //             return acc;
+    //         }, []);
 
-            setUsersData(uniqueUsersData);
-        });
-        socket.on('disconnect', () => {
-            setUsersData((prevUsersData) => {
-                return prevUsersData.filter((userData) => userData.socketID !== socket.id);
-            });
-        });
+    //         setUsersData(uniqueUsersData);
+    //     });
+    //     socket.on('disconnect', () => {
+    //         setUsersData((prevUsersData) => {
+    //             return prevUsersData.filter((userData) => userData.socketID !== socket.id);
+    //         });
+    //     });
 
-    }, [user?.userName,]);
+    // }, [user?.userName,]);
 
     useEffect(() => {
 
@@ -75,32 +74,30 @@ const Chat: React.FC = () => {
         socket.on('response', (data) => {
             if (data.userId === user?.userName) {
                 dispatch(addPrivateMessage(data))
-            } else {
-                dispatch(addMessage(data))
-            }  
+            }
         });
 
-        const allMessages = [...messages, ...privateMessages];
+        // const allMessages = [...messages, ...privateMessages];
 
-        const sortedMessages = allMessages.sort((a, b) => {
-            const timeA = new Date(a.time);
-            const timeB = new Date(b.time);
-            return timeA.getTime() - timeB.getTime();
-        });
+        // const sortedMessages = allMessages.sort((a, b) => {
+        //     const timeA = new Date(a.time);
+        //     const timeB = new Date(b.time);
+        //     return timeA.getTime() - timeB.getTime();
+        // });
         // allMessages.sort((a, b) => +a.time - +b.time);
-    console.log('allMessages',  sortedMessages);
+    // console.log('allMessages',  sortedMessages);
         return () => {
             console.log('Stopping listening to response!');
             socket.off('response');
         };
-    }, [dispatch, user?.userName, messages, privateMessages]);
+    }, [dispatch, user?.userName, privateMessages]);
     console.log('privateMessages', privateMessages);
 
     return (
         <div className={chatWrapper}>
             <div className="flex flex-row h-full">
                 <ul className="flex-1 h-[300px] overflow-auto border-r-2 border-white">
-                    {messages && messages.map((message) =>
+                    {/* {messages && messages.map((message) =>
                         message.name === user?.userName ? (
                             <div key={message.id} className="mt-[10px] ml-[200px] bg-white mb-[10px] 
                             rounded-xl mr-[5px]">
@@ -114,8 +111,8 @@ const Chat: React.FC = () => {
                                 <li>{message.text}</li>
                             </div>
                         )
-                    )}
-                    {/* {privateMessages && privateMessages.map((message) =>
+                    )} */}
+                    {privateMessages && privateMessages.map((message) =>
                         message.name === user?.userName ? (
                             <div key={message.id + Math.random()} className="mt-[10px] ml-[200px] bg-green-500 mb-[10px] 
                             rounded-xl mr-[5px]">
@@ -129,19 +126,12 @@ const Chat: React.FC = () => {
                                 <li>{message.text}</li>
                             </div>
                         )
-                    )} */}
-                    {messages.length === 0 && <div className='ml-[100px] mt-[20px]'>Пока нет сообщений...</div>}
+                    )}
+                    {privateMessages.length === 0 && <div className='ml-[100px] mt-[20px]'>Пока нет сообщений...</div>}
                 </ul>
 
                 <div className='pl-[5px] h-full border-l-2 border-white  overflow-auto'>
-                    <p>Пользователи онлайн:</p>
-                    {usersData.map((userData) => (
-                        <li className='flex justify-center' key={userData.socketID}>
-                            <Link to={`/private-chat/`} className='cursor-pointer'>
-                {userData.user}
-            </Link>
-                        </li>
-                    ))}
+                    <p>Личный чат с пользователем:</p>
                 </div>
             </div>
 
@@ -164,4 +154,4 @@ const Chat: React.FC = () => {
     );
 }
 
-export default Chat;
+export default PrivateChat;

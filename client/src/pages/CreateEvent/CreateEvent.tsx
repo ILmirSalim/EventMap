@@ -3,8 +3,11 @@ import { YMaps, Map, Placemark, GeolocationControl } from "@pbe/react-yandex-map
 import { useDispatch, useSelector } from 'react-redux';
 import { addEvent } from '../../redux/slices/eventSlice';
 import { AppDispatch, RootState } from '../../redux/store/store'
-import { Event, EventState } from './interfaces';
 import socketIOClient from 'socket.io-client';
+import { Event, EventState } from './interfaces';
+
+const ENDPOINT = 'http://localhost:3002';
+const socket = socketIOClient(ENDPOINT);
 
 export const CreateEvent = () => {
   const [title, setTitle] = useState('');
@@ -18,7 +21,7 @@ export const CreateEvent = () => {
   const [userLocation, setUserLocation] = useState<[number, number]>([0, 0]);
   const [placemarkCoordinates, setPlacemarkCoordinates] = useState<number[]>([])
   const [userCreatedEvent, setUserCreatedEvent] = useState<string | undefined>('')
-  const [showNotification, setShowNotification] = useState(false);
+  const [disabled, setDisabled] = useState<boolean>(true);
 
   const user = useSelector((state: RootState) => state.auth.user)
   const dispatch: AppDispatch = useDispatch<AppDispatch>()
@@ -33,7 +36,6 @@ export const CreateEvent = () => {
     const point = "Point"
 
     const newEvent = {
-
       title: title,
       description: description,
       locationType: locationType,
@@ -52,9 +54,15 @@ export const CreateEvent = () => {
 
     try {
       dispatch(addEvent(newEvent));
-      // socket.emit('create event', newEvent)
-      setShowNotification(true)
-
+      socket.emit('create event', newEvent)
+      setTitle('');
+      setDescription('');
+      setLocationType('');
+      setCoordinates([]);
+      setAddress('');
+      setDay('');
+      setTime('');
+      setCategory('');
     } catch (error) {
       console.error(error);
     }
@@ -69,10 +77,11 @@ export const CreateEvent = () => {
         console.error(error);
       }
     );
-
+    setDisabled(!(description && locationType && coordinates && address && day && time && category))
     setUserCreatedEvent(user?.email)
 
-  }, [user?.email]);
+  }, [user?.email, title, description, locationType, coordinates, address, day, time, category]);
+
 
   return (
     <div className='flex justify-center items-center  shadow-xl shadow-white w-[1200px]'>
@@ -135,11 +144,12 @@ export const CreateEvent = () => {
             value={category}
             onChange={(e) => setCategory(e.target.value)} />
 
-          <button
+          <button disabled={disabled}
             className='mt-4 mb-4 w-full bg-gradient-to-r from-green-400 to-cyan-400
             hover:scale-110 transform transition-all duration-200   
             hover:text-white active:bg-violet-700 focus:outline-none 
-            focus:ring focus:ring-violet-300 rounded-xl outline-none p-[5px]'
+            focus:ring focus:ring-violet-300 rounded-xl outline-none p-[5px]
+            disabled:opacity-50 disabled:hover:scale-100 disabled:text-black'
             type="submit">Создать событие</button>
         </form>
       </div>
@@ -180,11 +190,6 @@ export const CreateEvent = () => {
           </YMaps>
         </div>
       </div>
-      {showNotification && (
-        <div className="fixed bottom-20 right-20 p-4 bg-gray-500 text-white">
-          Событие успешно добавлено!
-        </div>
-      )}
     </div>
   );
 };

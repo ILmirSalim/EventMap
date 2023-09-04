@@ -5,6 +5,7 @@ import { login } from '../../redux/slices/userSlice';
 import { RootState, AppDispatch } from '../../redux/store/store'
 import UserCredentials from './interface/userCredentails'
 import { useNavigate } from 'react-router-dom';
+import { buttonAuth, buttonRecover } from './style';
 
 const AuthComponent: React.FC = () => {
   const [isHidden, setIsHidden] = useState<boolean>(true)
@@ -43,16 +44,17 @@ const AuthComponent: React.FC = () => {
     const { name, value } = event.target;
     setUserCredentials((prevState) => ({ ...prevState, [name]: value }));
   };
-  
+
   useEffect(() => {
     setDisabled(!(userCredentials.email && userCredentials.password));
-    
-  }, [ userCredentials.password, userCredentials.email])
+
+  }, [userCredentials.password, userCredentials.email])
 
   return (
     <>
       {isAuthenticated ? null : (
-        <div className='flex flex-col justify-center items-center h-screen w-[400px] mt-[-100px] shadow-2xl shadow-white'>
+        <div className='flex flex-col justify-center items-center 
+        h-screen w-[400px] mt-[-100px] shadow-2xl shadow-white'>
           <form onSubmit={handleSubmit} className='flex flex-col'>
             <label className='mb-[10px]'>
               Email:
@@ -76,10 +78,7 @@ const AuthComponent: React.FC = () => {
                 placeholder='Введите пароль'
               />
             </label>
-            <button disabled={disabled} type="submit" className='p-[5px] hover:scale-110 
-            transform transition-all duration-200
-             bg-gradient-to-r from-green-400 to-cyan-400 
-             rounded-xl disabled:opacity-50 disabled:hover:scale-100'>Авторизация</button>
+            <button disabled={disabled} type="submit" className={buttonAuth}>Авторизация</button>
           </form>
           {isHidden && <button className='mt-[5px]' onClick={toggleHidden}>Не помню пароль...</button>}
           {!isHidden &&
@@ -90,10 +89,7 @@ const AuthComponent: React.FC = () => {
                 value={email}
                 onChange={(event) => setEmail(event.target.value)}
               />
-              <button onClick={() => recoverPassword(email)} className='bg-gradient-to-r 
-              from-green-400 to-cyan-400 rounded-xl
-              rounded-2xl p-[3px] hover:scale-110 
-              transform transition-all duration-200 p-[5px] w-[195px]'>Восстановить пароль</button>
+              <button onClick={() => recoverPassword(email)} className={buttonRecover}>Восстановить пароль</button>
             </div>
           }
         </div>
