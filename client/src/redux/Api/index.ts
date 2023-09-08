@@ -3,9 +3,28 @@ import { apiServer } from '../../constants';
 import { Event } from './interface/IEvent';
 
 export const eventAPI = {
-  async createEvent(newEvent: Event): Promise<Event> {
+  // async createEvent(newEvent: Event): Promise<Event> {
+  //   try {
+  //     const response: AxiosResponse<Event> = await axios.post<Event>(`${apiServer}/newevent`, newEvent);
+  //     return response.data;
+  //   } catch (err) {
+  //     console.log(err);
+  //     throw new Error('Failed to create event');
+  //   }
+  // },
+  async createEvent(formData: FormData): Promise<Event> {
+    console.log('formdata', formData);
+    
     try {
-      const response: AxiosResponse<Event> = await axios.post<Event>(`${apiServer}/newevent`, newEvent);
+      const response: AxiosResponse<Event> = await axios.post<Event>(
+        `${apiServer}/newevent`,
+        formData,
+        {
+          headers: {
+            'Content-Type': 'multipart/form-data',
+          },
+        }
+      );
       return response.data;
     } catch (err) {
       console.log(err);

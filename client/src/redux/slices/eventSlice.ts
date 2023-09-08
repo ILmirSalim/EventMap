@@ -9,10 +9,17 @@ const initialState: IEventState = {
   events: []
 };
 
+// export const addEvent = createAsyncThunk(
+//   'event/create',
+//   async (newEvent: IEvent) => {
+//     return await eventAPI.createEvent(newEvent)
+//   }
+// )
+
 export const addEvent = createAsyncThunk(
   'event/create',
-  async (newEvent: IEvent) => {
-    return await eventAPI.createEvent(newEvent)
+  async (formData: FormData) => {
+    return await eventAPI.createEvent(formData)
   }
 )
 export const getAllEvents = createAsyncThunk(
@@ -41,17 +48,17 @@ export const searchEvents = createAsyncThunk(
   async (
     { title, category, startDate, endDate, longitude, latitude, distance }: {
 
-      title: string,
+      title?: string,
       category: string,
       startDate: Date | null,
       endDate: Date | null,
-      longitude: number,
-      latitude: number,
+      longitude?: number,
+      latitude?: number,
       distance: number
 
     }
   ) => {
-    return await eventAPI.searchEvents(title, category, startDate, endDate, longitude, latitude, distance);
+    return await eventAPI.searchEvents(title!, category, startDate, endDate, longitude!, latitude!, distance);
   }
 );
 

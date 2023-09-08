@@ -22,6 +22,7 @@ export const CreateEvent = () => {
   const [placemarkCoordinates, setPlacemarkCoordinates] = useState<number[]>([])
   const [userCreatedEvent, setUserCreatedEvent] = useState<string | undefined>('')
   const [disabled, setDisabled] = useState<boolean>(true);
+  const [selectedFile, setSelectedFile] = useState<File>();
 
   const user = useSelector((state: RootState) => state.auth.user)
   const dispatch: AppDispatch = useDispatch<AppDispatch>()
@@ -31,6 +32,13 @@ export const CreateEvent = () => {
     setCoordinates(clickedCoordinates);
     setPlacemarkCoordinates([event.get('coords')[0], event.get('coords')[1]]);
   };
+
+  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    if (event.target.files && event.target.files.length > 0) {
+      setSelectedFile(event.target.files[0]);
+    }
+  };
+
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const point = "Point"
@@ -51,18 +59,25 @@ export const CreateEvent = () => {
       category: category,
       userCreatedEvent: userCreatedEvent || ''
     };
+    const formData = new FormData();
+    formData.append('title', title);
+    formData.append('description', description);
+    formData.append('locationType', locationType);
+    formData.append('location[type][type]', point);
+    formData.append('location[coordinates]', JSON.stringify(coordinates));
+    formData.append('address', address);
+    formData.append('day', JSON.stringify(day));
+    formData.append('time', JSON.stringify(time));
+    formData.append('category', category);
+    formData.append('userCreatedEvent', userCreatedEvent || '');
+
+    if (selectedFile) {
+      formData.append('image', selectedFile);
+    }
 
     try {
-      dispatch(addEvent(newEvent));
-      socket.emit('create event', newEvent)
-      setTitle('');
-      setDescription('');
-      setLocationType('');
-      setCoordinates([]);
-      setAddress('');
-      setDay('');
-      setTime('');
-      setCategory('');
+      dispatch(addEvent(formData))
+      socket.emit('create event', newEvent);
     } catch (error) {
       console.error(error);
     }
@@ -143,6 +158,8 @@ export const CreateEvent = () => {
             type="text"
             value={category}
             onChange={(e) => setCategory(e.target.value)} />
+
+          <input className='mt-[10px]' type="file" onChange={handleFileChange} />
 
           <button disabled={disabled}
             className='mt-4 mb-4 w-full bg-gradient-to-r from-green-400 to-cyan-400

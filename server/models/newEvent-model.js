@@ -7,12 +7,10 @@ const eventSchema = new Schema({
   location: {
     type: {
       type: String, 
-      enum: ['Point'],
-      
+      enum: ['Point'],    
     },
     coordinates: {
       type: [Number],
-      
     }
   },
   address: { type: String },
@@ -28,7 +26,8 @@ const eventSchema = new Schema({
   feedbackUser: [{
     user: { type: String },
     feedback: { type: String }
-  }]
+  }],
+  image: {type: String}
 });
 
 eventSchema.index({ location: '2dsphere' });

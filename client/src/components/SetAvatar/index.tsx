@@ -4,16 +4,12 @@ import { RootState, AppDispatch } from '../../redux/store/store'
 import { useSelector, useDispatch } from 'react-redux';
 import avatar from '../../assets/avatar.svg'
 import { getUser, login } from '../../redux/slices/userSlice';
-interface ResponsePayload {
-  avatar?: string;
-  // Другие свойства, присутствующие в response.payload
-}
+
 export const AvatarUpload = () => {
   const [selectedFile, setSelectedFile] = useState<File>();
   const [path, setPath] = useState<string | undefined>('')
   const [newPath, setNewPath] = useState<string | undefined>()
   const user = useSelector((state: RootState) => state.auth.user)
-  // const userUpdate = useSelector((state: RootState) => state.auth.userUpdate)
   const dispatch = useDispatch<AppDispatch>()
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.files && event.target.files.length > 0) {
@@ -34,10 +30,9 @@ export const AvatarUpload = () => {
             headers: {
               'Content-Type': 'multipart/form-data',
             },
-
           }
         );
-        
+
         dispatch(getUser(user!.email))
         alert('Аватар успешно добавлен!')
 
@@ -52,11 +47,14 @@ export const AvatarUpload = () => {
   useEffect(() => {
     setPath(user?.avatar?.split('\\').pop())
   }, [user, path])
- 
+
   return (
     <div className='flex flex-col justify-center items-center '>
       {!user?.avatar && <img className='h-[100px] w-[100px]' src={avatar} alt="Avatar" />}
-      {user?.avatar && <img className='h-[100px] w-[100px]' src={`http://localhost:3002/${path}`} alt="Uploaded Avatar" />}
+      {user?.avatar && <img
+        className='h-[100px] w-[100px]'
+        src={`http://localhost:3002/${path}`}
+        alt="Uploaded Avatar" />}
       {!user?.avatar && <input className='mt-[10px]' type="file" onChange={handleFileChange} />}
       {!user?.avatar && <button className='bg-gradient-to-r from-green-400 to-cyan-400 hover:text-white
        mt-[10px] p-[4px] rounded-xl ' onClick={() => handleSubmit(user?._id)}>Загрузить аватар</button>}

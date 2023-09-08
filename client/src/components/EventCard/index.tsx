@@ -28,7 +28,7 @@ export const EventCard = () => {
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setRating(+event.target.value);
   };
-  
+
   const handleNavigate = () => {
     navigate('/search-event');
   };
@@ -103,11 +103,16 @@ export const EventCard = () => {
     <div className="p-[10px] shadow-lg shadow-white w-[600px] h-[1000px] 
     bg-gradient-to-r from-green-400 to-cyan-400 
     flex flex-col justify-center items-center rounded-xl">
-      <div className="text-center mt-[-50px] border-white border p-[10px] w-full rounded-xl">
+      <div className="flex flex-col items-center text-center mt-[-50px] border-white border p-[10px] w-full rounded-xl">
+        {!event.image && <>Нет изображения события</>}
+        {event.image && <img
+          className='h-[100px] w-[100px] rounded-lg'
+          src={`http://localhost:3002/${event.image.split('\\').pop()}`}
+          alt="paintEvent" />}
         <h2 className="font-bold"> Название мероприятия: {event.title}</h2>
         <div className="">
-        <p><span className="font-bold">Организатор мероприятия:</span> {event.userCreatedEvent}</p>
-        <span className="hover:text-white cursor-pointer">Написать организатору...</span>
+          <p><span className="font-bold">Организатор мероприятия:</span> {event.userCreatedEvent} </p>
+          <Link to={`/private-chat/`} className="hover:text-white cursor-pointer">Написать организатору...</Link>
         </div>
         <div className="">
           <p className="font-bold">Участники события:</p>
@@ -194,16 +199,23 @@ export const EventCard = () => {
       </div>
       <div className="font-bold mt-[20px]">Отзывы о событии:</div>
       <div className="flex flex-wrap">
-        {event?.feedbackUser && event?.feedbackUser.map((feedback) => <div key={feedback.feedback} className="rounded-xl p-[10px] text-center" >
+        {event?.feedbackUser && event?.feedbackUser.map((feedback) => <div key={feedback.feedback} 
+        className="rounded-xl p-[10px] text-center" >
           <div className="">Пользователь:{feedback.user}</div>
           <div className="mt-[5px]">{feedback.feedback}</div>
         </div>)}
         {event?.feedbackUser?.length === 0 && <>Еще нет комментариев...</>}
       </div>
-      <button className="border-white border p-[10px] rounded-xl mt-[20px] cursor-pointer font-bold hover:text-white" onClick={handleNavigate}>Назад</button>
       <button className="border-white border p-[10px] 
-      rounded-xl mt-[10px] cursor-pointer font-bold 
-      hover:text-white hover:bg-red-600" onClick={removeEvent}>Удалить событие</button>
+        rounded-xl mt-[20px] cursor-pointer font-bold 
+        hover:text-white" onClick={handleNavigate}>
+          Назад
+      </button>
+      {event.userCreatedEvent === user?.email && <button
+        className="border-white border p-[10px] 
+        rounded-xl mt-[10px] cursor-pointer 
+        font-bold hover:text-white hover:bg-red-600"
+        onClick={removeEvent}>Удалить событие</button>}
     </div>
   );
 };

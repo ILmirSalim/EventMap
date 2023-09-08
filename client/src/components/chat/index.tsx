@@ -14,43 +14,44 @@ const socket = socketIOClient(ENDPOINT);
 interface IUserOnlain {
     user: string,
     socketID: string;
+    email: string;
 }
 const Chat: React.FC = () => {
     const [message, setMessage] = useState<string>('');
     const [usersData, setUsersData] = useState<IUserOnlain[]>([])
-    const [recipient, setRecipient] = useState('')
+    // const [recipient, setRecipient] = useState('')
     const user = useSelector((state: RootState) => state.auth.user)
-    const dispatch: AppDispatch = useDispatch<AppDispatch>()
     const messages = useSelector((state: RootState) => state.auth.messages)
-    const privateMessages = useSelector((state: RootState) => state.auth.privateMessages)
-    const isAuthenticated = useSelector((state: RootState) => state.auth.isAuthenticated);
     const sendMessage = useCallback((event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
         const currentTime = new Date();
         socket.emit('chat message', {
             text: message,
             name: user?.userName,
+            user: user?.email,
             id: `${socket.id}-${uuidv4()}`,
-            userId: recipient,
+            // userId: recipient,
             socketID: socket.id,
             time: currentTime.toISOString()
         });
         setMessage('');
-    }, [message, user?.userName, recipient]);
+    }, [message, user?.userName, user?.email]);
 
     const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         setMessage(event.target.value);
     };
     useEffect(() => {
-
-        socket.emit('newUser', { user: user?.userName, socketID: socket.id })
+        
+        socket.emit('newUser', { user: user?.userName, socketID: socket.id, email: user?.email })
 
         socket.on('responseNewUser', (data: IUserOnlain[]) => {
+            console.log('data in user', data);
+            
             const uniqueUsersData: IUserOnlain[] = data.reduce((acc, curr) => {
                 // Добавляем проверку на наличие значения curr перед выполнением сравнения
                 if (curr && curr.user) {
                     // Проверяем, есть ли уже объект с таким именем в асс
-                    const existingUser = acc.find((user: IUserOnlain) => user.user === curr.user);
+                    const existingUser = acc.find((user: IUserOnlain) => user.email === curr.email);
                     // Если объект с таким именем уже существует, не добавляем его в аккумулятор
                     if (!existingUser) {
                         acc.push(curr as never);
@@ -67,35 +68,8 @@ const Chat: React.FC = () => {
             });
         });
 
-    }, [user?.userName,]);
-
-    useEffect(() => {
-
-
-        socket.on('response', (data) => {
-            if (data.userId === user?.userName) {
-                dispatch(addPrivateMessage(data))
-            } else {
-                dispatch(addMessage(data))
-            }  
-        });
-
-        const allMessages = [...messages, ...privateMessages];
-
-        const sortedMessages = allMessages.sort((a, b) => {
-            const timeA = new Date(a.time);
-            const timeB = new Date(b.time);
-            return timeA.getTime() - timeB.getTime();
-        });
-        // allMessages.sort((a, b) => +a.time - +b.time);
-    console.log('allMessages',  sortedMessages);
-        return () => {
-            console.log('Stopping listening to response!');
-            socket.off('response');
-        };
-    }, [dispatch, user?.userName, messages, privateMessages]);
-    console.log('privateMessages', privateMessages);
-
+    }, [user?.userName, user?.email]);
+console.log('usersData', usersData);
     return (
         <div className={chatWrapper}>
             <div className="flex flex-row h-full">
@@ -108,28 +82,13 @@ const Chat: React.FC = () => {
                                 <li className='pl-[5px]'>{message.text}</li>
                             </div>
                         ) : (
-                            <div key={message.id} className='ml-[5px] border-white border rounded-xl 
+                            <div key={message.id} className='ml-[10px] mt-[10px] border-white border rounded-xl 
                             w-1/2 p-[5px] bg-white '>
                                 <div className='font-bold'>{message.name}:</div>
                                 <li>{message.text}</li>
                             </div>
                         )
                     )}
-                    {/* {privateMessages && privateMessages.map((message) =>
-                        message.name === user?.userName ? (
-                            <div key={message.id + Math.random()} className="mt-[10px] ml-[200px] bg-green-500 mb-[10px] 
-                            rounded-xl mr-[5px]">
-                                <div className='font-bold pl-[5px]'>Я:</div>
-                                <li className='pl-[5px]'>{message.text}</li>
-                            </div>
-                        ) : (
-                            <div key={message.id + Math.random()} className='mt-[10px] ml-[5px] bg-green-700 border-white border rounded-xl 
-                            w-1/2 p-[5px] bg-white '>
-                                <div className='fo nt-bold'>Личное сообщение от: {message.name}:</div>
-                                <li>{message.text}</li>
-                            </div>
-                        )
-                    )} */}
                     {messages.length === 0 && <div className='ml-[100px] mt-[20px]'>Пока нет сообщений...</div>}
                 </ul>
 
@@ -137,9 +96,11 @@ const Chat: React.FC = () => {
                     <p>Пользователи онлайн:</p>
                     {usersData.map((userData) => (
                         <li className='flex justify-center' key={userData.socketID}>
-                            <Link to={`/private-chat/`} className='cursor-pointer'>
-                {userData.user}
-            </Link>
+                            <Link to={`/private-chat/`} className='cursor-pointer hover:font-bold'>
+                                {userData.user} ({userData.email})
+                            </Link>
+                            
+
                         </li>
                     ))}
                 </div>
@@ -151,10 +112,6 @@ const Chat: React.FC = () => {
                     onChange={handleChange}
                     className='w-full ml-[10px] pl-[20px]'
                     placeholder='Введите сообщение' />
-                <input type="text" value={recipient}
-                    onChange={(e) => setRecipient(e.target.value)}
-                    className='ml-[10px] pl-[20px] w-full mt-[10px]'
-                    placeholder='ID получателя(кликните по имени пользователя)' />
                 <button type="submit"
                     className='mt-[10px] hover:font-bold cursor-pointer outline-none'>
                     Отправить сообщение

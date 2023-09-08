@@ -39,9 +39,9 @@ export const SearchEvent: React.FC = () => {
         latitude: latitude,
         distance: distance
       };
-      
+
       const events = await dispatch(searchEvents(searchEvent));
-      
+
       setEvents(events.payload as never);
     } catch (error) {
       console.log(error);
@@ -58,6 +58,7 @@ export const SearchEvent: React.FC = () => {
       }
     );
   }, [])
+
   return (
     <div className='h-[500px] bg-gradient-to-r from-teal-200 to-lime-200 shadow-xl shadow-white 
     w-[1200px] h-full '>
@@ -99,7 +100,8 @@ export const SearchEvent: React.FC = () => {
           />
           <button className=' p-[5px] rounded-lg 
             bg-gradient-to-r from-green-400 
-            to-cyan-400 mt-[10px] w-full hover:scale-110 transform transition-all duration-200 '
+            to-cyan-400 mt-[10px] w-full 
+            hover:scale-110 transform transition-all duration-200 '
             onClick={() => handleSearchClick(title, category, date, lastDate, userLocation[0], userLocation[1], distance)}>
             Искать
           </button>
@@ -111,6 +113,11 @@ export const SearchEvent: React.FC = () => {
               <div className='p-[10px] m-[10px] w-48 bg-gradient-to-r from-green-400 to-cyan-400 
               rounded-lg hover:scale-110 transform transition-all duration-200 flex flex-col 
               text-center items-center' key={event._id}>
+                {!event.image && <>Нет картинки</>}
+                {event.image && <img
+                  className='h-[100px] w-[100px]'
+                  src={`http://localhost:3002/${event.image.split('\\').pop()}`}
+                  alt="Uploaded" />}
                 <div className='italic'><p className='font-bold'>Название:</p> {event.title}</div>
                 <div className='italic'><p className='font-bold'>Категория:</p>{event.category}</div>
                 <div className='italic'><p className='font-bold'>Описание:</p> {event.description}</div>

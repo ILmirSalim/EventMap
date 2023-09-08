@@ -17,4 +17,5 @@ export default interface Event {
     user: string;
     feedback: string;
   }[]
+  image: string
 }

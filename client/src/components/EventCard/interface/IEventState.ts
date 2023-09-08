@@ -20,6 +20,7 @@ export interface Event {
     user: string;
     feedback: string;
   }[]
+  image: string
 }
 
 export default interface IEventState {

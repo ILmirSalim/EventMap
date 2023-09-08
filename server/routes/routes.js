@@ -6,19 +6,20 @@ const authMiddleware = require("../middlewares/authMiddleware")
 const imageMiddlware = require('../middlewares/imageUploads')
 const multer = require('multer');
 const path = require('path');
+const { v4: uuidv4 } = require('uuid');
 const routes = new Router()
 
 const storage = multer.diskStorage({
-    destination: (req, file, cb) => {
-      cb(null, 'uploads'); // папка, куда будут сохраняться аватары
-    },
-    filename: (req, file, cb) => {
-      cb(null, `${Date.now()}.${path.extname(file.originalname)}`); // уникальное имя файла с расширением
-    }
-  });
-  
-  // Инициализация multer с указанием хранилища
-  const upload = multer({ storage });
+  destination: (req, file, cb) => {
+    cb(null, 'uploads');
+  },
+  filename: (req, file, cb) => {
+    const uniqueFilename = `${uuidv4()}.${path.extname(file.originalname)}`
+    cb(null, uniqueFilename);
+  },
+})
+// Инициализация multer с указанием хранилища
+const upload = multer({ storage });
 
 routes.post('/registration',
     imageMiddlware.single('avatar'),
@@ -34,7 +35,8 @@ routes.delete('/deleteUser', userController.deleteUser)
 routes.get('/getUser', userController.getUserinDatabase)
 // routes.post('/api/upload', upload.single('avatar'), userController.setAvatar)
 
-routes.post('/newevent', eventController.addEvent)
+// routes.post('/newevent', eventController.addEvent)
+routes.post('/newevent', upload.single('image'), eventController.addEvent)
 routes.delete('/deleteEvent', eventController.deleteEvents)
 routes.get('/events', eventController.getAllEvents)
 routes.post('/addUserEvent', eventController.addUserToEvent)

@@ -34,12 +34,12 @@ class EventsController {
     try {
       const eventId = req.body.eventId;
       const user = { userId: req.body.userId, userName: req.body.userName };
-  
+
       const event = await EventModel.findById(eventId);
       if (event.users.some((existingUser) => existingUser.userId === user.userId)) {
         return res.status(400).json({ message: 'User is already added to the event' });
       }
-  
+
       event.users.push(user);
       const updatedEvent = await event.save();
       res.status(200).json(updatedEvent);
@@ -78,7 +78,7 @@ class EventsController {
   }
 
   async updateEvent(req, res) {
-    
+
     try {
       const event = await EventModel.findByIdAndUpdate(req.body.id, {
         title: req.body.title,
@@ -94,7 +94,7 @@ class EventsController {
         category: req.body.category,
         userCreatedEvent: req.body.userCreatedEvent
       }, { new: true })
-      
+
       if (!event) {
         return res.status(404).json({ message: 'Событие не найдено' })
       }
@@ -111,11 +111,11 @@ class EventsController {
       const userId = req.body.userId;
 
       await EventModel.findByIdAndUpdate(
-        eventId, 
-        { $pull: { users: { userId } } }, 
+        eventId,
+        { $pull: { users: { userId } } },
         { new: true }
       );
-     
+
       res.status(200).json({ message: 'User remove in event' });
 
     } catch (e) {
@@ -126,7 +126,7 @@ class EventsController {
 
   async deleteEvents(req, res) {
     try {
-      const {eventId} = req.body;
+      const { eventId } = req.body;
       console.log('number', eventId);
       await EventModel.findByIdAndDelete(eventId);
 
@@ -143,8 +143,8 @@ class EventsController {
       const userId = req.body.userId;
 
       // const events = await EventModel.find({ users: userId });
-      const events = await EventModel.find({ 
-        users: { $elemMatch: { userId } } 
+      const events = await EventModel.find({
+        users: { $elemMatch: { userId } }
       });
 
       res.status(200).json(events);
@@ -182,7 +182,7 @@ class EventsController {
       }
 
       if (longitude && latitude && distance) {
-        
+
         searchEvent.location = {
           $nearSphere: {
             $geometry: {
@@ -193,16 +193,44 @@ class EventsController {
           }
         };
       }
-      
+
       let events = await EventModel.find(searchEvent);
       res.json(events);
-     
+
     } catch (err) {
       res.json({ message: err });
     }
   }
 
+  // async addEvent(req, res) {
+  //   try {
+  //     const eventModel = new EventModel({
+  //       title: req.body.title,
+  //       description: req.body.description,
+  //       locationType: req.body.locationType,
+  //       location: {
+  //         type: req.body.location.type.type,
+  //         coordinates: req.body.location.coordinates
+  //       },
+  //       address: req.body.address,
+  //       day: req.body.day,
+  //       time: req.body.time,
+  //       category: req.body.category,
+  //       userCreatedEvent: req.body.userCreatedEvent
+  //     })
+
+  //     await eventModel.save()
+  //     res.status(200).json({ message: 'Событие успешно добавлено' })
+  //   } catch (error) {
+  //     res.status(400).json({ message: 'Произошла ошибка при добавлении', error })
+  //   }
+  // };
   async addEvent(req, res) {
+    console.log('req.body.coord', req.body.location.coordinates);
+    const file = req.file
+    // console.log('file', file);
+    const { path } = file;
+    // console.log('path', path);
     try {
       const eventModel = new EventModel({
         title: req.body.title,
@@ -210,21 +238,22 @@ class EventsController {
         locationType: req.body.locationType,
         location: {
           type: req.body.location.type.type,
-          coordinates: req.body.location.coordinates
+          coordinates: JSON.parse(req.body.location.coordinates)
         },
         address: req.body.address,
         day: req.body.day,
         time: req.body.time,
         category: req.body.category,
-        userCreatedEvent: req.body.userCreatedEvent
-      })
-
-      await eventModel.save()
-      res.status(200).json({ message: 'Событие успешно добавлено' })
+        userCreatedEvent: req.body.userCreatedEvent,
+        image: path
+      });
+      console.log('eventModel', eventModel);
+      await eventModel.save();
+      res.status(200).json({ message: 'Событие успешно добавлено' });
     } catch (error) {
-      res.status(400).json({ message: 'Произошла ошибка при добавлении', error })
+      res.status(400).json({ message: 'Произошла ошибка при добавлении', error });
     }
-  };
+  }
 
   async deleteTodo(req, res) {
     try {
