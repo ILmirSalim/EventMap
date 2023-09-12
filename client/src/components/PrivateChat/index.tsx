@@ -5,8 +5,8 @@ import { RootState } from '../../redux/store/store'
 import { v4 as uuidv4 } from 'uuid';
 import { chatWrapper } from './style';
 import { IUserOnlain } from './interface/IUserOnlain';
+import { ENDPOINT } from '../../constants';
 
-const ENDPOINT = 'http://localhost:3002';
 const socket = socketIOClient(ENDPOINT);
 
 const PrivateChat: React.FC = () => {

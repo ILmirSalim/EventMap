@@ -1,14 +1,13 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { addMessage, addPrivateMessage } from "../../redux/slices/userSlice"
 import socketIOClient from 'socket.io-client';
-import { useDispatch, useSelector } from 'react-redux';
-import { RootState, AppDispatch } from '../../redux/store/store'
+import { useSelector } from 'react-redux';
+import { RootState } from '../../redux/store/store'
 import 'react-toastify/dist/ReactToastify.css';
 import { v4 as uuidv4 } from 'uuid';
 import { chatWrapper } from './style';
 import { Link } from 'react-router-dom';
+import { ENDPOINT } from '../../constants';
 
-const ENDPOINT = 'http://localhost:3002';
 const socket = socketIOClient(ENDPOINT);
 
 interface IUserOnlain {
@@ -19,7 +18,6 @@ interface IUserOnlain {
 const Chat: React.FC = () => {
     const [message, setMessage] = useState<string>('');
     const [usersData, setUsersData] = useState<IUserOnlain[]>([])
-    // const [recipient, setRecipient] = useState('')
     const user = useSelector((state: RootState) => state.auth.user)
     const messages = useSelector((state: RootState) => state.auth.messages)
     const sendMessage = useCallback((event: React.FormEvent<HTMLFormElement>) => {
@@ -30,7 +28,6 @@ const Chat: React.FC = () => {
             name: user?.userName,
             user: user?.email,
             id: `${socket.id}-${uuidv4()}`,
-            // userId: recipient,
             socketID: socket.id,
             time: currentTime.toISOString()
         });
@@ -40,13 +37,10 @@ const Chat: React.FC = () => {
     const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         setMessage(event.target.value);
     };
-    useEffect(() => {
-        
-        socket.emit('newUser', { user: user?.userName, socketID: socket.id, email: user?.email })
 
+    useEffect(() => {
+        socket.emit('newUser', { user: user?.userName, socketID: socket.id, email: user?.email })
         socket.on('responseNewUser', (data: IUserOnlain[]) => {
-            console.log('data in user', data);
-            
             const uniqueUsersData: IUserOnlain[] = data.reduce((acc, curr) => {
                 // Добавляем проверку на наличие значения curr перед выполнением сравнения
                 if (curr && curr.user) {
@@ -59,7 +53,6 @@ const Chat: React.FC = () => {
                 }
                 return acc;
             }, []);
-
             setUsersData(uniqueUsersData);
         });
         socket.on('disconnect', () => {
@@ -67,9 +60,8 @@ const Chat: React.FC = () => {
                 return prevUsersData.filter((userData) => userData.socketID !== socket.id);
             });
         });
-
     }, [user?.userName, user?.email]);
-console.log('usersData', usersData);
+
     return (
         <div className={chatWrapper}>
             <div className="flex flex-row h-full">
@@ -99,8 +91,6 @@ console.log('usersData', usersData);
                             <Link to={`/private-chat/`} className='cursor-pointer hover:font-bold'>
                                 {userData.user} ({userData.email})
                             </Link>
-                            
-
                         </li>
                     ))}
                 </div>

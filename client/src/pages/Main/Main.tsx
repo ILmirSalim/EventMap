@@ -1,11 +1,11 @@
 import React, { useState, useEffect, useMemo, useCallback, ChangeEvent } from "react";
 import { YMaps, Map, GeolocationControl, Placemark } from "@pbe/react-yandex-maps";
-import Footer from "../../components/Footer";
 import { useSelector, useDispatch, shallowEqual } from 'react-redux';
 import { EventState, Event } from './interfaces/Eventstate';
-import { addEvent, getAllEvents } from '../../redux/slices/eventSlice';
-import { AppDispatch, RootState } from '../../redux/store/store'
+import { getAllEvents } from '../../redux/slices/eventSlice';
+import { AppDispatch } from '../../redux/store/store'
 import { searchEvents } from '../../redux/slices/eventSlice';
+import Footer from "../../components/Footer";
 import { wrapperBanner } from "./style";
 
 const MainPage: React.FC = () => {

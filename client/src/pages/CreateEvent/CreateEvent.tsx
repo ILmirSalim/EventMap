@@ -5,15 +5,15 @@ import { addEvent } from '../../redux/slices/eventSlice';
 import { AppDispatch, RootState } from '../../redux/store/store'
 import socketIOClient from 'socket.io-client';
 import { Event, EventState } from './interfaces';
+import { ENDPOINT } from '../../constants';
 
-const ENDPOINT = 'http://localhost:3002';
 const socket = socketIOClient(ENDPOINT);
 
 export const CreateEvent = () => {
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [locationType, setLocationType] = useState('');
-  const [coordinates, setCoordinates] = useState<any>([]);
+  const [coordinates, setCoordinates] = useState<number[]>([]);
   const [address, setAddress] = useState('');
   const [day, setDay] = useState<any>();
   const [time, setTime] = useState<any>();

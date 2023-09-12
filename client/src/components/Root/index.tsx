@@ -11,8 +11,8 @@ import { useDispatch } from "react-redux";
 import Logo from '../../assets/logo.svg'
 import Chat from "../chat";
 import { Link } from 'react-router-dom';
+import { ENDPOINT } from "../../constants";
 
-const ENDPOINT = 'http://localhost:3002';
 const socket = socketIOClient(ENDPOINT);
 
 export const Root = () => {
@@ -38,12 +38,7 @@ export const Root = () => {
     socket.on('response', (data) => {
       if (data.userId === user?.userName) {
         dispatch(addPrivateMessage(data))
-        console.log('data in root', data);
-        
-        // if (data.name !== user?.userName) {
-        // }
         setShowPrivateNotification(true)
-
       } else {
         dispatch(addMessage(data))
         setShowNotification(true);

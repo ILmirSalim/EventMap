@@ -1,11 +1,11 @@
 const { Router } = require('express')
 const userController = require('../controllers/userController')
 const eventController = require('../controllers/eventController')
-const { check, body } = require("express-validator")
-const authMiddleware = require("../middlewares/authMiddleware")
-const imageMiddlware = require('../middlewares/imageUploads')
+const { body } = require("express-validator")
 const multer = require('multer');
 const path = require('path');
+// const { Request } = require('express');
+// const { DiskStorageOptions } = require('multer');
 const { v4: uuidv4 } = require('uuid');
 const routes = new Router()
 
@@ -18,11 +18,20 @@ const storage = multer.diskStorage({
     cb(null, uniqueFilename);
   },
 })
+
+// const storage: DiskStorageOptions = {
+//   destination: (req: Request, file: Express.Multer.File, cb) => {
+//     cb(null, "uploads");
+//   },
+//   filename: (req: Request, file: Express.Multer.File, cb) => {
+//     const uniqueFilename = `${uuidv4()}${path.extname(file.originalname)}`;
+//     cb(null, uniqueFilename);
+//   },
+// };
 // Инициализация multer с указанием хранилища
 const upload = multer({ storage });
 
 routes.post('/registration',
-    imageMiddlware.single('avatar'),
     body('userName').not().isEmpty(),
     body('userAge').not().isEmpty(),
     body('email').isEmail(),
@@ -33,9 +42,8 @@ routes.post('/logout', userController.logout)
 routes.post('/recoverPassword', userController.recoverPassword)
 routes.delete('/deleteUser', userController.deleteUser)
 routes.get('/getUser', userController.getUserinDatabase)
-// routes.post('/api/upload', upload.single('avatar'), userController.setAvatar)
+routes.post('/upload', upload.single('avatar'), userController.setAvatar)
 
-// routes.post('/newevent', eventController.addEvent)
 routes.post('/newevent', upload.single('image'), eventController.addEvent)
 routes.delete('/deleteEvent', eventController.deleteEvents)
 routes.get('/events', eventController.getAllEvents)

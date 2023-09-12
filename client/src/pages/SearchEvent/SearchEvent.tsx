@@ -1,5 +1,4 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import axios from 'axios';
 import { Link } from "react-router-dom";
 import Event from './interface/IEvent'
 import { AppDispatch } from '../../redux/store/store'
@@ -121,7 +120,6 @@ export const SearchEvent: React.FC = () => {
                 <div className='italic'><p className='font-bold'>Название:</p> {event.title}</div>
                 <div className='italic'><p className='font-bold'>Категория:</p>{event.category}</div>
                 <div className='italic'><p className='font-bold'>Описание:</p> {event.description}</div>
-                {/* <div className='italic'><p className='font-bold'>Дата события:</p> {event.day}</div> */}
                 <div className='italic'><p className='font-bold'>Создал событие:</p> {event.userCreatedEvent}</div>
                 <Link to={`/event/${event._id}`}>Подробнее о событии...</Link>
               </div>

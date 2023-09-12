@@ -1,10 +1,9 @@
-const userService = require('../service/user-service')
+const userService = require('../service/user-service.ts')
 const bcrypt = require('bcrypt')
 const { validationResult } = require('express-validator')
 const jwt = require('jsonwebtoken')
 const { secret } = require('../config')
-const fileSerevice = require('../service/fileService')
-const file = require('../models/avatar-model')
+const User = require('../models/user-model')
 
 const generateAccessToken = (id) => {
     const payload = {
@@ -35,12 +34,30 @@ class UserController {
 
     async setAvatar(req, res) {
         try {
-            const { email } = req.body.email
-            const user = await userService.updateUserAvatar(email)
-            return res.json(user)
+            const userId = req.body._id;
+            const file = req.file;
+            const { path } = file;
+            if (!file) {
+                throw new Error('Файл не загружен');
+            }
+            const updatedUser = await User.findByIdAndUpdate(
+                userId,
+                {
+                    avatar: path,
+                    avatarPath: path
+                },
+                { new: true }
+            );
+
+            if (!updatedUser) {
+                throw new Error('Пользователь не найден');
+            }
+
+            await updatedUser.save();
+
+            res.json(updatedUser);
         } catch (error) {
-            console.log(error)
-            res.send({ message: "Error set avatar" })
+            console.error('Произошла ошибка при сохранении аватара:', error);
         }
     }
 
@@ -57,13 +74,10 @@ class UserController {
 
     async recoverPassword(req, res) {
         try {
-
             const { email } = req.body;
-
             const newPassord = await userService.recoverPassword(email);
 
             return res.json(newPassord)
-
         } catch (e) {
             console.log(e)
             res.send({ message: "Server error" })
@@ -76,7 +90,6 @@ class UserController {
             const userData = await userService.login(email, password);
             res.cookie('refreshToken', userData.refreshToken, { maxAge: 30 * 24 * 60 * 60 * 1000, httpOnly: true })
             return res.json(userData)
-
         } catch (error) {
 
         }
@@ -124,9 +137,5 @@ class UserController {
             return res.status(500).json({ error: 'Ошибка сервера' });
         }
     };
-
-
-
-
 }
 module.exports = new UserController()
