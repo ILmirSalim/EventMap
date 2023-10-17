@@ -1,11 +1,11 @@
 const UserModel = require('../models/user-model')
 const bcrypt = require('bcrypt')
 const tokenService = require('./token-service')
-const UserDto = require('../dtos/user-dto')
+// const UserDto = require('../dtos/user-dto')
 
 class UserService {
 
-    async registration(email, password, userName, userAge, interestsAndPreferences) {
+    async registration(email:string, password:string, userName:string, userAge:number, interestsAndPreferences:string[]) {
         const candidate = await UserModel.findOne({ email })
         if (candidate) {
             throw new Error(`Пользователь с почтовым адресом ${email} уже существует`)
@@ -26,10 +26,10 @@ class UserService {
 
         const tokens = tokenService.generateTokens({ user });
         await tokenService.saveToken(user.id, tokens.refreshToken);
-
+        
         return { ...tokens, user }
     }
-    async recoverPassword(email) {
+    async recoverPassword(email:string) {
         const user = await UserModel.findOne({ email });
         if (!user) {
             throw new Error(`Пользователь с почтовым адресом ${email} не найден`);
@@ -46,17 +46,17 @@ class UserService {
         return newPassword;
     }
 
-    async deleteUser(email) {
+    async deleteUser(email:string) {
         await UserModel.findOneAndDelete({ email });
         return console.log('Пользователь удален!');;
     }
 
-    async logout(refreshToken) {
+    async logout(refreshToken: string) {
         const token = await tokenService.removeToken(refreshToken);
         return token;
     }
 
-    async login(email, password) {
+    async login(email:string, password:string) {
         const user = await UserModel.findOne({ email })
         if (!user) {
             throw new Error(`Пользователь ${email} не найден `)
@@ -73,7 +73,7 @@ class UserService {
 
     }
 
-    async refresh(refreshToken) {
+    async refresh(refreshToken:string) {
         if (!refreshToken) {
             throw new Error(`Пользователь не авторизован`)
         }
@@ -85,14 +85,14 @@ class UserService {
             throw new Error( `Пользователь не авторизован`)
         }
         const user = await UserModel.findById(userData.id);
-        const userDto = new UserDto(user);
-        const tokens = tokenService.generateTokens({ ...userDto });
-        await tokenService.saveToken(userDto.id, tokens.refreshToken);
-
-        return { ...tokens, user: userDto }
+        // const userDto = new UserDto(user);
+        const tokens = tokenService.generateTokens({ ...user });
+        await tokenService.saveToken(user.id, tokens.refreshToken);
+        
+        return { ...tokens, user: user }
     }
 
-    async getUser(email) {
+    async getUser(email:string) {
         const user = await UserModel.findOne({ email })
 
         if (!user) {

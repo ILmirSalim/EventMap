@@ -10,15 +10,16 @@ import { useSelector } from 'react-redux';
 import { useDispatch } from "react-redux";
 import Logo from '../../assets/logo.svg'
 import Chat from "../chat";
-import { Link } from 'react-router-dom';
 import { ENDPOINT } from "../../constants";
+import ChatPrivateNotification from "../Notifications/ChatPrivateNotification";
+import ChatNotification from "../Notifications/ChatNotification";
+import EventNotification from "../Notifications/EventNotification";
 
 const socket = socketIOClient(ENDPOINT);
 
 export const Root = () => {
   const user = useSelector((state: RootState) => state.auth.user)
   const isAuthenticated = useSelector((state: RootState) => state.auth.isAuthenticated);
-  const [countMessage, setCountMessage] = useState(0);
   const [newEvent, setNewEvent] = useState<Event>();
   const [newUpdateEvent, setNewUpdateEvent] = useState<Event>();
   const [eventType, setEventType] = useState('');
@@ -31,7 +32,6 @@ export const Root = () => {
 
   const handleToggleChat = () => {
     setIsChatOpen(!isChatOpen);
-    setCountMessage(0)
   }
 
   useEffect(() => {
@@ -105,7 +105,7 @@ export const Root = () => {
       )}
       {!isAuthenticated && <div className="flex items-center justify-between w-[1300px]">
         <NavLink className=" ml-[50px] p-[10px] flex justify-center " to="/">Главная страница</NavLink>
-        <NavLink className="p-[10px] mr-[50px] " to="/user-profile">Войти</NavLink>
+        <NavLink className="p-[10px] mr-[50px] " to="/user-profile" title="Вход в учетную запись">Войти</NavLink>
       </div>}
     </div>
     <div className="flex items-center justify-center mt-[50px] h-full w-full p-[20px]">
@@ -113,60 +113,32 @@ export const Root = () => {
       {isAuthenticated && <div>
         <div onClick={handleToggleChat}>
           {!isChatOpen && <div>
-            <div className="flex justify-center rounded-full w-[10px] h-[10px] 
-            border border-white fixed bottom-[60px] right-[10px]
-             text-red-600 p-4 items-center">{countMessage}</div>
             <img className="fixed bottom-0 right-0 p-4" alt="chat" src={chatImage} />
           </div>
           }
         </div>
         {isChatOpen && <div className="flex flex-col fixed bottom-0 right-0 p-4">
-          <div className="cursor-pointer hover:text-white font-bold ml-[500px]" onClick={handleToggleChat}>Свернуть общий чат</div>
+          <div className="cursor-pointer hover:text-white font-bold ml-[500px]" 
+          onClick={handleToggleChat}>Свернуть общий чат</div>
           <div className="">
             <Chat />
           </div>
         </div>}
       </div>}
 
-      {showPrivateNotification && (
-        <div className="fixed bottom-10 left-20 p-[10px] bg-green-500 text-white flex flex-col rounded-xl">
-          <Link to={`/private-chat/`} className='cursor-pointer' onClick={()=>setShowPrivateNotification(false)}>
-            <div>Новое личное сообщение!</div>
-            <div>От пользователя: {lastMessage?.name}</div>
-          </Link>
-        </div>
+      {showPrivateNotification && <ChatPrivateNotification 
+      lastMessage={lastMessage}
+      setShowPrivateNotification={setShowPrivateNotification}/>}
+
+      {showNotification && ( <ChatNotification 
+      lastMessage={lastMessage}
+      user={user}/>
       )}
-      {showNotification && (
-        lastMessage?.name === user?.userName ? (null) :
-          (<div className="fixed bottom-10 left-20 
-            p-[10px] bg-green-500 text-white flex flex-col rounded-xl">
-            <div>
-              Новое сообщение в общем чате!
-            </div>
-            <div>
-              От пользователя: {lastMessage.name}
-            </div>
-          </div>)
-      )}
-      {eventNotification && (
-        <div className="fixed bottom-10 left-20 
-        p-[10px] bg-green-500 text-white flex flex-col rounded-xl">
-          {eventType === 'newEvent' && (
-            <div>
-              Добавлено новое событие!
-            </div>
-          )}
-          {eventType === 'updateEvent' && (
-            <div>
-              Обновлено событие!
-            </div>
-          )}
-          <div>
-            Название события: {eventType === 'newEvent' && newEvent!.title}
-            {eventType === 'updateEvent' && newUpdateEvent!.title}
-          </div>
-        </div>
-      )}
+      
+      {eventNotification && <EventNotification 
+      eventType={eventType}
+      newEvent={newEvent}
+      newUpdateEvent={newUpdateEvent}/>}
     </div>
   </div>)
 }

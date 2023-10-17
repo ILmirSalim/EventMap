@@ -1,14 +1,67 @@
 const EventModel = require('../models/newEvent-model')
+import { Request, Response, Express, ErrorRequestHandler } from 'express';
+import { Multer } from 'multer'
+type RegistrationRequestBody = {
+  _id?: string,
+  email: string;
+  password: string;
+  userName: string;
+  userAge: number;
+  interestsAndPreferences: string[];
+ 
+};
+interface ErrorMessage {
+  message:string
+}
+interface existingUser {
+  userId: string;
+}
 
+type EventBody = {
+  title: string;
+  description?: string;
+  locationType?: string;
+  location?: {
+    type:  {
+      type: string;
+    }
+    coordinates: string;
+  };
+  address?: string;
+  day?: Date;
+  time?: string;
+  category?: string;
+  users?: {
+    userId: string;
+    userName: string;
+  };
+  userCreatedEvent?: string;
+  rating?: number;
+  feedbackUser?: {
+    user: string;
+    feedback: string;
+  };
+  image?: string;
+};
+
+type ReqFile = Express.Multer.File & { path: string };
+
+export interface TypedRequestBody<T> extends Express.Request {
+  body: T
+  file: ReqFile
+  query?: any
+  cookies: string
+  
+}
 class EventsController {
 
-  async getAllEvents(req, res) {
+  async getAllEvents(req: Request, res: Response) {
     try {
       const eventsData = await EventModel.find({})
       res.status(200).json(eventsData)
     } catch (e) {
-      console.log('this is error', e.message)
-      res.status(400).json({ message: e.message })
+      console.log('this is error')
+      
     }
   };
 
@@ -30,25 +83,25 @@ class EventsController {
   //     res.status(400).json({ message: e.message });
   //   }
   // };
-  async addUserToEvent(req, res) {
+  async addUserToEvent(req: Request, res: Response) {
     try {
       const eventId = req.body.eventId;
       const user = { userId: req.body.userId, userName: req.body.userName };
 
       const event = await EventModel.findById(eventId);
-      if (event.users.some((existingUser) => existingUser.userId === user.userId)) {
+      if (event.users.some((existingUser: existingUser) => existingUser.userId === user.userId)) {
         return res.status(400).json({ message: 'User is already added to the event' });
       }
 
       event.users.push(user);
       const updatedEvent = await event.save();
       res.status(200).json(updatedEvent);
-    } catch (error) {
-      console.log('Error:', error.message);
-      res.status(400).json({ message: error.message });
+    } catch (error:any) {
+      console.log('Error: Ошибка в добавлении пользователя в событие!');
+      
     }
   };
-  async addFeedbackToEvent(req, res) {
+  async addFeedbackToEvent(req: Request, res: Response) {
     try {
       const eventId = req.body.eventId;
       const user = req.body.user;
@@ -71,13 +124,13 @@ class EventsController {
       );
 
       res.status(200).json(updatedEvent);
-    } catch (error) {
+    } catch (error:any) {
       console.error('This is error', error.message);
       res.status(400).json({ message: error.message });
     }
   }
 
-  async updateEvent(req, res) {
+  async updateEvent(req: Request, res: Response) {
 
     try {
       const event = await EventModel.findByIdAndUpdate(req.body.id, {
@@ -100,12 +153,12 @@ class EventsController {
       }
 
       res.status(200).json({ message: 'Событие успешно обновлено!', event })
-    } catch (error) {
+    } catch (error:any) {
       res.status(400).json({ message: 'Произошла ошибка при обновлении события!', error })
     }
   };
 
-  async removeUserFromEvent(req, res) {
+  async removeUserFromEvent(req: Request, res: Response) {
     try {
       const eventId = req.body.eventId;
       const userId = req.body.userId;
@@ -118,13 +171,13 @@ class EventsController {
 
       res.status(200).json({ message: 'User remove in event' });
 
-    } catch (e) {
-      console.log('This is error', e.message);
-      res.status(400).json({ message: e.message });
+    } catch (e:any) {
+      console.log('This is error');
+      
     }
   }
 
-  async deleteEvents(req, res) {
+  async deleteEvents(req: Request, res: Response) {
     try {
       const { eventId } = req.body;
       console.log('number', eventId);
@@ -133,12 +186,12 @@ class EventsController {
       res.status(200).json({ message: 'Event delete!' });
 
     } catch (e) {
-      console.log('This is error', e.message);
-      res.status(400).json({ message: e.message });
+      console.log('This is error');
+     
     }
   }
 
-  async getEventsByUserId(req, res) {
+  async getEventsByUserId(req: Request, res: Response) {
     try {
       const userId = req.body.userId;
 
@@ -150,20 +203,20 @@ class EventsController {
       res.status(200).json(events);
 
     } catch (e) {
-      console.log('This is error', e.message);
-      res.status(400).json({ message: e.message });
+      console.log('This is error');
+      
     }
   }
 
-  async searchEvents(req, res) {
+  async searchEvents(req: Request, res: Response) {
     const title = req.body.title;
     const category = req.body.category;
     const startDate = req.body.startDate;
     const endDate = req.body.endDate;
     const { longitude, latitude, distance } = req.body;
-
+    
     try {
-      const searchEvent = {};
+      const searchEvent: any = {};
 
       if (title) {
         searchEvent.title = title;
@@ -193,11 +246,11 @@ class EventsController {
           }
         };
       }
-
+      console.log('searchMain', searchEvent);
       let events = await EventModel.find(searchEvent);
       res.json(events);
 
-    } catch (err) {
+    } catch (err:any) {
       res.json({ message: err });
     }
   }
@@ -225,20 +278,20 @@ class EventsController {
   //     res.status(400).json({ message: 'Произошла ошибка при добавлении', error })
   //   }
   // };
-  async addEvent(req, res) {
-    console.log('req.body.coord', req.body.location.coordinates);
+  async addEvent(req: TypedRequestBody<EventBody>, res: Response) {
+    
     const file = req.file
-    // console.log('file', file);
+    
     const { path } = file;
-    // console.log('path', path);
+   
     try {
       const eventModel = new EventModel({
         title: req.body.title,
         description: req.body.description,
         locationType: req.body.locationType,
         location: {
-          type: req.body.location.type.type,
-          coordinates: JSON.parse(req.body.location.coordinates)
+          type: req.body.location?.type?.type,
+          coordinates: JSON.parse(req.body.location!.coordinates)
         },
         address: req.body.address,
         day: req.body.day,
@@ -247,45 +300,11 @@ class EventsController {
         userCreatedEvent: req.body.userCreatedEvent,
         image: path
       });
-      console.log('eventModel', eventModel);
+      
       await eventModel.save();
       res.status(200).json({ message: 'Событие успешно добавлено' });
-    } catch (error) {
+    } catch (error:any) {
       res.status(400).json({ message: 'Произошла ошибка при добавлении', error });
-    }
-  }
-
-  async deleteTodo(req, res) {
-    try {
-      if (!req.body.id) {
-        res.status(400).json({ message: 'Пожалуйста укажите id заголовка' })
-      }
-
-      const { deletedCount } = await TodosModel.findByIdAndDelete({ _id: req.body.id })
-
-      if (deletedCount === 0) {
-        res.status(400).json({ massege: 'Удаление не произошло, пожалуйста проверьте id заголовка' })
-      }
-
-      res.status(200).json({ message: 'Элемент успешно удален' })
-
-    } catch (error) {
-      res.status(400).json({ massege: 'Произошла ошибка при удалении' })
-    }
-  }
-
-  async updateTodo(req, res) {
-    try {
-      if (!req.body.id) {
-        res.status(400).json({ message: 'Пожалуйста укажите id заголовка' })
-      }
-
-      await TodosModel.findByIdAndUpdate({ _id: req.body.id }, { title: req.body.titleTwo }, { new: true });
-
-      res.status(200).json({ message: 'Элемент успешно изменен' })
-
-    } catch (error) {
-      res.status(400).json({ massege: 'Произошла ошибка при удалении' })
     }
   }
 }

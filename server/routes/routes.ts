@@ -4,31 +4,22 @@ const eventController = require('../controllers/eventController')
 const { body } = require("express-validator")
 const multer = require('multer');
 const path = require('path');
-// const { Request } = require('express');
-// const { DiskStorageOptions } = require('multer');
+import { Request } from 'express';
+import { FileFilterCallback } from 'multer';
+
 const { v4: uuidv4 } = require('uuid');
 const routes = new Router()
 
 const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
+  destination: (req: Request, file: Express.Multer.File, cb: (error: Error | null, destination: string) => void) => {
     cb(null, 'uploads');
   },
-  filename: (req, file, cb) => {
-    const uniqueFilename = `${uuidv4()}.${path.extname(file.originalname)}`
+  filename: (req: Request, file: Express.Multer.File, cb: (error: Error | null, filename: string) => void) => {
+    const uniqueFilename = `${uuidv4()}${path.extname(file.originalname)}`;
     cb(null, uniqueFilename);
   },
-})
+});
 
-// const storage: DiskStorageOptions = {
-//   destination: (req: Request, file: Express.Multer.File, cb) => {
-//     cb(null, "uploads");
-//   },
-//   filename: (req: Request, file: Express.Multer.File, cb) => {
-//     const uniqueFilename = `${uuidv4()}${path.extname(file.originalname)}`;
-//     cb(null, uniqueFilename);
-//   },
-// };
-// Инициализация multer с указанием хранилища
 const upload = multer({ storage });
 
 routes.post('/registration',

@@ -1,20 +1,13 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { eventAPI } from '../Api';
-import IEvent from './interface/IEvent'
-import IEventState from './interface/IEventState'
+import {Event} from './interfaces/IEvent'
+import IEventState from './interfaces/IEventState'
 
 const initialState: IEventState = {
   status: 'idle',
   event: null,
   events: []
 };
-
-// export const addEvent = createAsyncThunk(
-//   'event/create',
-//   async (newEvent: IEvent) => {
-//     return await eventAPI.createEvent(newEvent)
-//   }
-// )
 
 export const addEvent = createAsyncThunk(
   'event/create',
@@ -38,7 +31,7 @@ export const deleteEvent = createAsyncThunk(
 
 export const updateEvent = createAsyncThunk(
   'event/update',
-  async (newEvent: IEvent) => {
+  async (newEvent: Event) => {
     return await eventAPI.updateEvent(newEvent)
   }
 )
@@ -47,7 +40,6 @@ export const searchEvents = createAsyncThunk(
   'event/search',
   async (
     { title, category, startDate, endDate, longitude, latitude, distance }: {
-
       title?: string,
       category: string,
       startDate: Date | null,
@@ -55,9 +47,8 @@ export const searchEvents = createAsyncThunk(
       longitude?: number,
       latitude?: number,
       distance: number
-
     }
-  ) => {
+  ) => {   
     return await eventAPI.searchEvents(title!, category, startDate, endDate, longitude!, latitude!, distance);
   }
 );
@@ -110,5 +101,6 @@ export const eventSlice = createSlice({
       })
   },
 });
-// export const { } = eventSlice.actions
+
 export default eventSlice.reducer;
+

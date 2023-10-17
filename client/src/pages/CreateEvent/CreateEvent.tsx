@@ -1,10 +1,11 @@
-import React, { useEffect, useState, useMemo, useCallback } from 'react';
+import React, { useEffect, useState } from 'react';
 import { YMaps, Map, Placemark, GeolocationControl } from "@pbe/react-yandex-maps";
 import { useDispatch, useSelector } from 'react-redux';
 import { addEvent } from '../../redux/slices/eventSlice';
 import { AppDispatch, RootState } from '../../redux/store/store'
 import socketIOClient from 'socket.io-client';
-import { Event, EventState } from './interfaces';
+import { Input } from '../../ui-components/Input';
+import { Label } from '../../ui-components/Label';
 import { ENDPOINT } from '../../constants';
 
 const socket = socketIOClient(ENDPOINT);
@@ -15,8 +16,8 @@ export const CreateEvent = () => {
   const [locationType, setLocationType] = useState('');
   const [coordinates, setCoordinates] = useState<number[]>([]);
   const [address, setAddress] = useState('');
-  const [day, setDay] = useState<any>();
-  const [time, setTime] = useState<any>();
+  const [day, setDay] = useState<string>('');
+  const [time, setTime] = useState<string>('');
   const [category, setCategory] = useState('');
   const [userLocation, setUserLocation] = useState<[number, number]>([0, 0]);
   const [placemarkCoordinates, setPlacemarkCoordinates] = useState<number[]>([])
@@ -59,6 +60,7 @@ export const CreateEvent = () => {
       category: category,
       userCreatedEvent: userCreatedEvent || ''
     };
+
     const formData = new FormData();
     formData.append('title', title);
     formData.append('description', description);
@@ -103,64 +105,53 @@ export const CreateEvent = () => {
       <div>
         <h1 className='font-bold pl-[-10px] mb-[10px]'>Введите данные о событии:</h1>
         <form onSubmit={handleSubmit} className='flex flex-col items-center w-[200px]'>
-          <label className=''>
-            Название события:
-          </label>
-          <input className=' mb-[10px] rounded-xl outline-none p-[5px]'
+          <Label text='Название события:'/>
+          <Input className='mb-[10px] rounded-xl outline-none p-[5px]'
             type="text"
             value={title}
             onChange={(e) => setTitle(e.target.value)} />
-
-          <label>
-            Описание:
-          </label>
-          <input className='rounded-xl outline-none p-[5px]'
+        
+          <Label text='Описание:'/>
+          <Input className='rounded-xl outline-none p-[5px]'
             type="text"
             value={description}
             onChange={(e) => setDescription(e.target.value)} />
-
-          <label className='mt-[10px]  '>
-            Тип местоположения:
-
-          </label>
-          <input className=' mb-[5px]  rounded-xl outline-none p-[5px]'
+            
+          <Label className='mt-[10px]' text='Тип местоположения:'/>
+          <Input className='mb-[5px] rounded-xl outline-none p-[5px]'
             type="text"
             value={locationType}
             onChange={(e) => setLocationType(e.target.value)} />
 
-          <label>
-            Адрес:
-          </label>
-          <input className=' mb-[5px]  rounded-xl outline-none p-[5px]'
+          <Label text='Адрес:'/>
+          <Input className=' mb-[5px]  rounded-xl outline-none p-[5px]'
             type="text" value={address}
             onChange={(e) => setAddress(e.target.value)} />
 
-          <label>
-            Дата:
-          </label>
-          <input className='mb-[5px] rounded-xl outline-none p-[5px] w-full text-center'
+          <Label text='Дата:'/>
+          <Input className='mb-[5px] rounded-xl outline-none p-[5px] w-full text-center'
             type="date"
             value={day}
             onChange={(e) => setDay(e.target.value)} />
 
-          <label >
-            Время события:
-          </label>
-          <input className='w-full mb-[5px] text-center rounded-xl outline-none p-[5px]'
+          <Label text='Время события:'/>
+          <Input className='w-full mb-[5px] text-center rounded-xl outline-none p-[5px]'
             type="time"
             value={time}
             onChange={(e) => setTime(e.target.value)} />
 
-          <label>
-            Категория:
-          </label>
-          <input className='w-full  mb-[5px]  rounded-xl outline-none p-[5px]'
+          <Label text='Категория:'/>
+          <Input className='w-full  mb-[5px]  rounded-xl outline-none p-[5px]'
             type="text"
             value={category}
             onChange={(e) => setCategory(e.target.value)} />
-
-          <input className='mt-[10px]' type="file" onChange={handleFileChange} />
-
+          
+          <label className='h-[40px] bg-gradient-to-r from-green-400 to-cyan-400 w-full 
+          rounded-xl cursor-pointer mt-[10px] pt-[6px]'>
+              <span className='hover:text-white ml-[30px]'>Добавить картинку</span>
+              <Input className='opacity-0' type="file" onChange={handleFileChange} />
+          </label>
+          
           <button disabled={disabled}
             className='mt-4 mb-4 w-full bg-gradient-to-r from-green-400 to-cyan-400
             hover:scale-110 transform transition-all duration-200   
@@ -176,9 +167,9 @@ export const CreateEvent = () => {
           <p className='font-bold pl-[10px]'>Выберите место события:</p>
           <p className='font-bold pl-[10px]'>*кликните по карте</p>
         </div>
-        <div className=''>
+        <div>
           <YMaps>
-            <Map className=''
+            <Map 
               defaultState={{ center: userLocation, zoom: 10 }}
               onClick={setPlacemarkInMap}
               style={{ width: "500px", height: "500px" }}

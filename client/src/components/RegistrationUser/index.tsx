@@ -10,8 +10,7 @@ const RegistrationUser: React.FC = () => {
   const [password, setPassword] = useState('');
   const [userName, setUserName] = useState('');
   const [userAge, setUserAge] = useState('');
-  const [interestsAndPreferences, setinterestsAndPreferences] = useState('');
-  const [avatarPath, setAvatar] = useState('');
+  const [interestsAndPreferences, setinterestsAndPreferences] = useState<string[]>([]);
   const [disabled, setDisabled] = useState<boolean>(true);
 
   const dispatch = useDispatch<AppDispatch>()
@@ -27,7 +26,6 @@ const RegistrationUser: React.FC = () => {
         userName,
         userAge: parseInt(userAge),
         interestsAndPreferences,
-        avatarPath
       })).unwrap();
       alert("Регистрация прошла успешно");
 
@@ -41,9 +39,9 @@ const RegistrationUser: React.FC = () => {
     navigate('/')
   };
 
-  const removeUser = async (email: any) => {
+  const removeUser = async (email: string) => {
     try {
-      await dispatch(deleteUser(email))
+      await dispatch(deleteUser({email}))
       alert('Ваша учетная запись удалена!')
       navigate('/')
 
@@ -54,6 +52,7 @@ const RegistrationUser: React.FC = () => {
 
   useEffect(() => {
     const user = localStorage.getItem('token')
+  
     setDisabled(!(email && password && userName && userAge && interestsAndPreferences))
     if (user) {
       dispatch(hasUser())
@@ -74,11 +73,11 @@ const RegistrationUser: React.FC = () => {
           <div>Интересы: {user?.interestsAndPreferences}</div>
           <div>
             <button
-              className='cursor-pointer hover:text-white hover:font-bold 
-              bg-gradient-to-r from-green-400 to-cyan-400 mt-[20px] rounded-xl p-[5px]'
+              className='cursor-pointer hover:text-white 
+              bg-gradient-to-r from-green-400 to-cyan-400 mt-[20px] rounded-xl p-[8px]'
               onClick={handleLogout}>Выйти из профиля</button>
-            <button onClick={() => removeUser(user?.email)} className='cursor-pointer hover:text-white bg-gradient-to-r from-green-400 to-cyan-400
-              hover:font-bold ml-[10px] mt-[20px] p-[5px] rounded-xl' >
+            <button onClick={() => removeUser(user!.email)} className='cursor-pointer hover:text-white bg-gradient-to-r from-green-400 to-cyan-400
+               ml-[10px] mt-[20px] p-[8px] rounded-xl' >
               Удалить профиль</button>
           </div>
         </div>
@@ -121,7 +120,7 @@ const RegistrationUser: React.FC = () => {
             <input
               type="interestsAndPreferences"
               value={interestsAndPreferences}
-              onChange={(e) => setinterestsAndPreferences(e.target.value)}
+              onChange={(e) => setinterestsAndPreferences(e.target.value.split(',').map((user) => user.trim()))}
               placeholder="Ваши интересы"
               className='mb-[10px] p-[5px] rounded-xl'
             />

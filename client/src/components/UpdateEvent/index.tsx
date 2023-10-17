@@ -18,8 +18,8 @@ export const UpdateEvent = () => {
   const [locationType, setLocationType] = useState('');
   const [coordinates, setCoordinates] = useState<any>([]);
   const [address, setAddress] = useState('');
-  const [day, setDay] = useState<any>();
-  const [time, setTime] = useState<any>();
+  const [day, setDay] = useState<Date>(new Date());
+  const [time, setTime] = useState<string>('');
   const [category, setCategory] = useState('');
   const [userLocation, setUserLocation] = useState<[number, number]>([0, 0]);
   const [placemarkCoordinates, setPlacemarkCoordinates] = useState<number[]>([])
@@ -29,6 +29,7 @@ export const UpdateEvent = () => {
   const dispatch: AppDispatch = useDispatch<AppDispatch>()
   const { id } = useParams<{ id: string }>();
   const { events } = useSelector((state: { event: IEventState }) => state.event);
+
   const setPlacemarkInMap = (event: any) => {
     const clickedCoordinates = [event.get('coords')[0], event.get('coords')[1]];
     setCoordinates(clickedCoordinates);
@@ -36,6 +37,7 @@ export const UpdateEvent = () => {
   };
   const navigate = useNavigate()
   const event = events?.find((event: Event) => event._id === id);
+
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const point = "Point"
@@ -124,8 +126,8 @@ export const UpdateEvent = () => {
           </label>
           <input className='mb-[5px] rounded-xl outline-none p-[5px] w-full text-center'
             type="date"
-            value={day}
-            onChange={(e) => setDay(e.target.value)} />
+            value={day.toISOString().slice(0, 10)}
+            onChange={(e) => setDay(new Date(e.target.value))} />
 
           <label >
             Время события:

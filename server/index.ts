@@ -3,6 +3,7 @@ const mongoose = require('mongoose')
 const cors = require('cors')
 const routes = require('./routes/routes')
 const cookieParser = require('cookie-parser')
+import * as SocketIO from 'socket.io';
 
 require('dotenv').config()
 
@@ -21,7 +22,7 @@ interface IUserOnlain {
   email: string;
 }
 const usersOnl: IUserOnlain[] = [];
-io.on('connection', function (socket) {
+io.on('connection', function ( socket: SocketIO.Socket) {
   console.log(`${socket.id} пользователь подключен`);
 
   socket.on('disconnect', function () {

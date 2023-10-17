@@ -16,6 +16,7 @@ const OrganizedEvents: React.FC = () => {
 
   return (
     <div className='flex flex-wrap justify-center items-center'>
+      {!email && <>Не удалось получить данные о пользователе и его событиях...</>}
       {organizedEvents?.length === 0 && <div>Нет организуемых событий...</div>}
       <div className='flex flex-wrap w-full '>
         {organizedEvents?.map(event => (

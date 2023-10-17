@@ -13,7 +13,7 @@ const UserSchema = new Schema({
     diskSpace: { type: Number },
     usedSpace: { type: Number },
     avatar: {type:String},
-    avatarPath:{type:String},
+    // avatarPath:{type:String},
 })
 
 module.exports = model('User', UserSchema);
