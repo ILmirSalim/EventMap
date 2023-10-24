@@ -7,20 +7,16 @@ import { v4 as uuidv4 } from "uuid";
 import { chatWrapper } from "./style";
 import { Link } from "react-router-dom";
 import { ENDPOINT } from "../../constants";
+import { IUserOnlain } from "./interface";
 
 const socket = socketIOClient(ENDPOINT);
-
-interface IUserOnlain {
-  user: string;
-  socketID: string;
-  email: string;
-}
 
 const Chat: React.FC = () => {
   const [message, setMessage] = useState<string>("");
   const [usersData, setUsersData] = useState<IUserOnlain[]>([]);
   const user = useSelector((state: RootState) => state.auth.user);
   const messages = useSelector((state: RootState) => state.auth.messages);
+
   const sendMessage = useCallback(
     (event: React.FormEvent<HTMLFormElement>) => {
       event.preventDefault();
@@ -84,8 +80,7 @@ const Chat: React.FC = () => {
                 <div
                   key={message.id}
                   className="mt-[10px] ml-[200px] bg-white mb-[10px] 
-                            rounded-xl mr-[5px]"
-                >
+                  rounded-xl mr-[5px]">
                   <div className="font-bold pl-[5px]">Я:</div>
                   <li className="pl-[5px]">{message.text}</li>
                 </div>
@@ -93,8 +88,7 @@ const Chat: React.FC = () => {
                 <div
                   key={message.id}
                   className="ml-[10px] mt-[10px] border-white border rounded-xl 
-                            w-1/2 p-[5px] bg-white "
-                >
+                  w-1/2 p-[5px] bg-white ">
                   <div className="font-bold">{message.name}:</div>
                   <li>{message.text}</li>
                 </div>
@@ -111,8 +105,7 @@ const Chat: React.FC = () => {
             <li className="flex justify-center" key={userData.socketID}>
               <Link
                 to={`/private-chat/`}
-                className="cursor-pointer hover:font-bold"
-              >
+                className="cursor-pointer hover:font-bold">
                 {userData.user} ({userData.email})
               </Link>
             </li>

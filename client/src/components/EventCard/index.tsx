@@ -2,7 +2,6 @@ import React, { useState, useEffect } from "react";
 import { useNavigate, useParams, Link } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import { RootState, AppDispatch } from "../../redux/store/store";
-import { Event } from "../../pages/CreateEvent/interfaces";
 import { getAllEvents, deleteEvent } from "../../redux/slices/eventSlice";
 import { addUserInEvent } from "../../redux/slices/userSlice";
 import averageValueRating from "../../helpers/index";
@@ -108,7 +107,7 @@ export const EventCard = () => {
       setResultRate(averageValueRating(event!.rating));
     }
   }, [event?.users, user?._id, event]);
-  console.log(resultRate);
+  
   if (!event) {
     return <div>Страница не найдена...</div>;
   }
@@ -116,12 +115,12 @@ export const EventCard = () => {
   return (
     <div
       className="p-[10px] shadow-lg shadow-white w-[600px] h-[1300px] 
-    bg-gradient-to-r from-green-400 to-cyan-400 
-    flex flex-col justify-center items-center rounded-xl box-border"
-    >
+      bg-gradient-to-r from-green-400 to-cyan-400 
+      flex flex-col justify-center items-center rounded-xl box-border"
+      >
       <div
         className="flex flex-col items-center text-center mt-[-50px] 
-      border-white border p-[10px] w-full rounded-xl"
+        border-white border p-[10px] w-full rounded-xl"
       >
         {!event.image && <>Нет изображения события</>}
         {event.image && (
@@ -132,16 +131,17 @@ export const EventCard = () => {
           />
         )}
         <h2 className="font-bold"> Название мероприятия: {event.title}</h2>
-        <div className="">
+        <div className="flex items-center">
           <p>
-            <span className="font-bold">Организатор мероприятия:</span>{" "}
-            {event.userCreatedEvent}{" "}
+            <span className="font-bold">Организатор мероприятия:</span>
+            {event.userCreatedEvent}
           </p>
           <Link
             to={`/private-chat/`}
-            className="hover:text-white cursor-pointer"
+            className="hover:text-white cursor-pointer ml-[5px] 
+            rounded-xl border-white border p-[5px]"
           >
-            Написать организатору...
+            Написать организатору
           </Link>
         </div>
         <div className="">
@@ -155,11 +155,11 @@ export const EventCard = () => {
           </div>
         </div>
         <p>
-          <span className="font-bold">Описание события:</span>{" "}
+          <span className="font-bold">Описание события:</span>
           {event.description}
         </p>
         <p>
-          <span className="font-bold">Местоположение:</span>{" "}
+          <span className="font-bold">Местоположение:</span>
           {event.locationType}
         </p>
         <p>
@@ -223,68 +223,6 @@ export const EventCard = () => {
         </div>
         <div className="mt-[10px] font-bold">Поставьте оценку мероприятию:</div>
         <PointsComponent handleChange={handleChange}/>
-        {/* <div className="flex">
-          <div>
-            <input
-              type="radio"
-              id="rating1"
-              name="rating"
-              value="1"
-              onChange={handleChange}
-            />
-            <label className="pl-[5px] pr-[5px]" htmlFor="rating1">
-              1
-            </label>
-          </div>
-          <div>
-            <input
-              type="radio"
-              id="rating2"
-              name="rating"
-              value="2"
-              onChange={handleChange}
-            />
-            <label className="pl-[5px] pr-[5px]" htmlFor="rating2">
-              2
-            </label>
-          </div>
-          <div>
-            <input
-              type="radio"
-              id="rating3"
-              name="rating"
-              value="3"
-              onChange={handleChange}
-            />
-            <label className="pl-[5px] pr-[5px]" htmlFor="rating3">
-              3
-            </label>
-          </div>
-          <div>
-            <input
-              type="radio"
-              id="rating4"
-              name="rating"
-              value="4"
-              onChange={handleChange}
-            />
-            <label className="pl-[5px] pr-[5px]" htmlFor="rating4">
-              4
-            </label>
-          </div>
-          <div>
-            <input
-              type="radio"
-              id="rating5"
-              name="rating"
-              value="5"
-              onChange={handleChange}
-            />
-            <label className="pl-[5px] pr-[5px]" htmlFor="rating5">
-              5
-            </label>
-          </div>
-        </div> */}
         <button
           onClick={() => addFeedback(user?.email, id!, textFeedback, rating)}
           className="p-[10px] text-xs bg-gradient-to-r from-green-400 to-cyan-400 

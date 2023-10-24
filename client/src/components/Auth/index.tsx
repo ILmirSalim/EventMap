@@ -6,7 +6,7 @@ import { RootState, AppDispatch } from "../../redux/store/store";
 import UserCredentials from "./interface/userCredentails";
 import { useNavigate } from "react-router-dom";
 import { buttonAuth, buttonRecover } from "./style";
-
+import { apiServer } from "../../constants";
 const AuthComponent: React.FC = () => {
   const [isHidden, setIsHidden] = useState<boolean>(true);
   const [email, setEmail] = useState<string>("");
@@ -28,7 +28,7 @@ const AuthComponent: React.FC = () => {
   const recoverPassword = async (email: string) => {
     try {
       const response = await axios.post(
-        "http://localhost:3002/api/recoverPassword",
+        `${apiServer}/recoverPassword`,
         { email }
       );
       console.log("Recovered password:", response.data);

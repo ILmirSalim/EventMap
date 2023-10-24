@@ -1,10 +1,5 @@
 import React, { useState, useEffect, useMemo, useCallback } from "react";
-import {
-  YMaps,
-  Map,
-  GeolocationControl,
-  Placemark,
-} from "@pbe/react-yandex-maps";
+import { YMaps, Map, GeolocationControl, Placemark } from "@pbe/react-yandex-maps";
 import { useSelector, useDispatch, shallowEqual } from "react-redux";
 import { EventState, Event } from "./interfaces/Eventstate";
 import { getAllEvents } from "../../redux/slices/eventSlice";
@@ -13,6 +8,7 @@ import { searchEvents } from "../../redux/slices/eventSlice";
 import Footer from "../../components/Footer";
 import { wrapperBanner } from "./style";
 import Loader from "../../components/Loader";
+import { Input } from "../../ui-components/Input";
 
 const MainPage: React.FC = () => {
   const [userLocation, setUserLocation] = useState<[number, number]>([0, 0]);
@@ -80,7 +76,6 @@ const MainPage: React.FC = () => {
           <div className="flex box-border justify-center">
             <YMaps>
               <Map
-                className=""
                 defaultState={{ center: userLocation, zoom: 10 }}
                 style={{ width: "500px", height: "500px" }}
               >
@@ -155,33 +150,33 @@ const MainPage: React.FC = () => {
             </div>
           </div>
           <div className="flex items-center justify-center mt-[20px] flex justify-center">
-            <input
+            <Input
               className=" rounded-xl p-[5px] m-[5px] outline-none text-center"
               type="number"
               placeholder="Введите дистанцию(м)"
               value={distance}
               onChange={(e) => setDistance(Number(e.target.value))}
-            ></input>
-            <input
+            />
+            <Input
               className="rounded-xl p-[5px] m-[5px] outline-none text-center"
               type="text"
               placeholder="Тип события"
               onChange={(e) => setCategory(e.target.value)}
-            ></input>
+            />
             с
-            <input
+            <Input
               className="rounded-xl p-[5px] m-[5px] outline-none text-center"
               type="date"
               placeholder="С даты"
               onChange={(e) => setDate(new Date(e.target.value))}
-            ></input>
+            />
             до
-            <input
+            <Input
               className="rounded-xl p-[5px] m-[5px] outline-none hover:shadow-white text-center"
               type="date"
               placeholder="До даты"
               onChange={(e) => setDateEnd(new Date(e.target.value))}
-            ></input>
+            />
             <button
               onClick={() =>
                 handleSearchClick(
@@ -194,10 +189,9 @@ const MainPage: React.FC = () => {
                 )
               }
               className="w-[150px] p-[4px] rounded-lg 
-            bg-gradient-to-r from-green-400 
-            to-cyan-400 w-[100px] p-[7px]
-            hover:scale-110 transform transition-all duration-200"
-            >
+              bg-gradient-to-r from-green-400 
+              to-cyan-400 w-[100px] p-[7px]
+              hover:scale-110 transform transition-all duration-200">
               Найти события!
             </button>
           </div>

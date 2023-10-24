@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { RootState } from "../../../redux/store/store";
 import { Event } from '../../CreateEvent/interfaces';
+import { apiServer } from '../../../constants';
 import { wrapperVisEvents } from './style';
 import { useSelector } from "react-redux";
 import { Link } from "react-router-dom";
@@ -12,7 +13,7 @@ const VisitedEvents: React.FC = () => {
 
     const getUserEvents = async (userId: string | undefined) => {
         try {
-            const response = await axios.post('http://localhost:3002/api/getEventsByUserId', { userId })
+            const response = await axios.post(`${apiServer}/getEventsByUserId`, { userId })
             setEvents(response.data)
         } catch (error) {
             console.log(error);

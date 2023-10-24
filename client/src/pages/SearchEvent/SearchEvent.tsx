@@ -5,6 +5,8 @@ import { AppDispatch } from "../../redux/store/store";
 import { useDispatch } from "react-redux";
 import { searchEvents } from "../../redux/slices/eventSlice";
 import Loader from "../../components/Loader";
+import { Input } from "../../ui-components/Input";
+import { Label } from "../../ui-components/Label";
 
 export const SearchEvent: React.FC = () => {
   const [category, setCategory] = useState("");
@@ -76,36 +78,34 @@ export const SearchEvent: React.FC = () => {
         <>
           <div className="p-[10px] flex ">
             <div className="flex flex-col w-[300px]">
-              <label className="font-bold ml-[10px] ">
-                Выберите нужные фильтры:
-              </label>
+              <Label className="font-bold ml-[10px]" text="Выберите нужные фильтры:"/>
               <br />
-              <label className="ml-[10px]">Категория:</label>
-              <input
-                className="rounded-xl ml-[10px] mt-[10px] p-[5px]"
+              <Label className="ml-[10px] mt-[10px]" text="Категория:"/>
+              <Input
+                className="rounded-xl ml-[10px] p-[5px]"
                 placeholder="Категория"
                 type="text"
                 value={category}
                 onChange={handleCategoryChange}
               />
-              <label className="ml-[10px]">Заголовок:</label>
-              <input
+              <Label className="ml-[10px] mt-[10px]" text="Заголовок:"/>
+              <Input
                 className="rounded-xl ml-[10px] p-[5px]"
                 type="text"
                 placeholder="Заголовок"
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
               />
-              <label className="ml-[10px]">С даты:</label>
-              <input
+              <Label className="ml-[10px] mt-[10px]" text="С даты:"/>
+              <Input
                 className="rounded-xl ml-[10px] p-[5px]"
                 type="date"
                 id="date"
                 value={date ? date.toISOString().slice(0, 10) : ""}
                 onChange={(e) => setDate(new Date(e.target.value))}
               />
-              <label className="ml-[10px]">До даты:</label>
-              <input
+              <Label className="ml-[10px] mt-[10px]" text="До даты:"/>
+              <Input
                 className="rounded-xl p-[5px] ml-[10px]"
                 type="date"
                 id="date"
@@ -113,10 +113,8 @@ export const SearchEvent: React.FC = () => {
                 onChange={(e) => setLastDate(new Date(e.target.value))}
               />
               <br />
-              <label className="mr-[10px] ml-[10px]">
-                Ввести дистанцию(метр):
-              </label>
-              <input
+              <Label className="mr-[10px] mt-[10px] ml-[10px]" text="Ввести дистанцию(в метрах):"/>
+              <Input
                 className="rounded-xl p-[5px] mt-[10px]"
                 value={distance}
                 onChange={(e) => setDistance(Number(e.target.value))}
@@ -142,8 +140,8 @@ export const SearchEvent: React.FC = () => {
               </button>
             </div>
             <div className="flex flex-col ml-[20px]">
-              <h1 className="font-bold  pt-[10px]">Список событий:</h1>
-              <div className="flex  flex-wrap">
+              <h1 className="font-bold ">Список событий:</h1>
+              <div className="flex flex-wrap">
                 {Array.isArray(events) &&
                   events.map((event) => (
                     <div

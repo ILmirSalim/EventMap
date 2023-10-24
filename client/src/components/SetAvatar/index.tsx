@@ -74,7 +74,7 @@ export const AvatarUpload = () => {
       {!user?.avatar && (
         <button
           className="bg-gradient-to-r from-green-400 to-cyan-400 hover:text-white
-       mt-[10px] rounded-xl p-[8px]"
+          mt-[10px] rounded-xl p-[8px]"
           onClick={() => handleSubmit(user!._id!)}
         >
           Загрузить аватар

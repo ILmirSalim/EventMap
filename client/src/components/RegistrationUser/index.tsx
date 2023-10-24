@@ -1,9 +1,10 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { register, hasUser, logout, deleteUser } from '../../redux/slices/userSlice';
 import { RootState, AppDispatch } from '../../redux/store/store'
-import SetAvatar from '../SetAvatar/index'
 import { NavLink, useNavigate } from "react-router-dom";
+import { Input, InputWithRef } from '../../ui-components/Input';
+import SetAvatar from '../SetAvatar/index'
 
 const RegistrationUser: React.FC = () => {
   const [email, setEmail] = useState('');
@@ -13,10 +14,11 @@ const RegistrationUser: React.FC = () => {
   const [interestsAndPreferences, setinterestsAndPreferences] = useState<string[]>([]);
   const [disabled, setDisabled] = useState<boolean>(true);
 
-  const dispatch = useDispatch<AppDispatch>()
   const isAuthenticated = useSelector((state: RootState) => state.auth.isAuthenticated);
   const user = useSelector((state: RootState) => state.auth.user)
+  const dispatch = useDispatch<AppDispatch>()
   const navigate = useNavigate()
+  const emailInputRef = useRef<HTMLInputElement>(null)
   const handleRegister = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     try {
@@ -57,6 +59,9 @@ const RegistrationUser: React.FC = () => {
     if (user) {
       dispatch(hasUser())
     }
+    if (emailInputRef.current) {
+      emailInputRef.current.focus();
+    }
   }, [dispatch, email, password, userName, userAge, interestsAndPreferences])
 
 
@@ -85,15 +90,16 @@ const RegistrationUser: React.FC = () => {
         <div className='flex flex-col justify-center mt-[-200px]'>
           <div className='font-bold mb-[10px]'>Заполните данные для регистрации:</div>
           <form onSubmit={handleRegister} encType='multipart/form-data' className='flex flex-col'>
-            <input
+            <InputWithRef
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               placeholder="Введите email"
+              ref={emailInputRef} 
               className=' p-[5px] rounded-xl '
             />
             <br />
-            <input
+            <Input
               type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
@@ -101,7 +107,7 @@ const RegistrationUser: React.FC = () => {
               className=' p-[5px] rounded-xl'
             />
             <br />
-            <input
+            <Input
               type="username"
               value={userName}
               onChange={(e) => setUserName(e.target.value)}
@@ -109,7 +115,7 @@ const RegistrationUser: React.FC = () => {
               className=' p-[5px] rounded-xl'
             />
             <br />
-            <input
+            <Input
               type="userAge"
               value={userAge}
               onChange={(e) => setUserAge(e.target.value)}
@@ -117,7 +123,7 @@ const RegistrationUser: React.FC = () => {
               className=' p-[5px] rounded-xl'
             />
             <br />
-            <input
+            <Input
               type="interestsAndPreferences"
               value={interestsAndPreferences}
               onChange={(e) => setinterestsAndPreferences(e.target.value.split(',').map((user) => user.trim()))}

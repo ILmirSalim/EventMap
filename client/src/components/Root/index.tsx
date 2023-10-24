@@ -1,19 +1,19 @@
 import React, { useEffect, useState } from "react";
 import { addMessage, addPrivateMessage } from "../../redux/slices/userSlice";
+import ChatPrivateNotification from "../Notifications/ChatPrivateNotification";
+import ChatNotification from "../Notifications/ChatNotification";
+import EventNotification from "../Notifications/EventNotification";
 import { AppDispatch } from '../../redux/store/store'
 import { RootState } from '../../redux/store/store'
 import { Outlet, NavLink } from "react-router-dom";
 import { Event } from "./interfaces/iEventState";
 import socketIOClient from 'socket.io-client';
 import chatImage from '../../assets/image.svg'
+import { ENDPOINT } from "../../constants";
 import { useSelector } from 'react-redux';
 import { useDispatch } from "react-redux";
 import Logo from '../../assets/logo.svg'
 import Chat from "../chat";
-import { ENDPOINT } from "../../constants";
-import ChatPrivateNotification from "../Notifications/ChatPrivateNotification";
-import ChatNotification from "../Notifications/ChatNotification";
-import EventNotification from "../Notifications/EventNotification";
 
 const socket = socketIOClient(ENDPOINT);
 
